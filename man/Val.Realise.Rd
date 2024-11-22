@@ -24,6 +24,6 @@ Takes an association or interaction network object as well as the bioclimatic ni
 \examples{
 data("Niches_vec")
 data("Network_igraph")
-Val.Realise(Network_igraph = Network_igraph, Niches_vec = Niches_vec)
+Val.Realise(Network_igraph = Network_igraph, Trait_means = Niches_vec)
 
 }

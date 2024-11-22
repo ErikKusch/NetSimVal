@@ -17,7 +17,7 @@
 #' @examples
 #' data("Niches_vec")
 #' data("Network_igraph")
-#' Val.Realise(Network_igraph = Network_igraph, Niches_vec = Niches_vec)
+#' Val.Realise(Network_igraph = Network_igraph, Trait_means = Niches_vec)
 #'
 #' @export
 Val.Realise <- function(Network_igraph,
@@ -25,8 +25,8 @@ Val.Realise <- function(Network_igraph,
                         Effect_Dis = 0.5,
                         Env_sd = 2.5){
   ## Vertex names
-  if(is.null(V(Network_igraph)$names)){
-    V(Network_igraph)$names <- paste0("Sp_", V(Network_igraph))
+  if(is.null(igraph::V(Network_igraph)$names)){
+    igraph::V(Network_igraph)$names <- paste0("Sp_", igraph::V(Network_igraph))
   }
   
   ## Mode of network
@@ -34,7 +34,7 @@ Val.Realise <- function(Network_igraph,
   
   ## Network Adjacency matrix
   Network_Realised <- as.matrix(as_adjacency_matrix(Network_igraph, attr = "weight"))
-  colnames(Network_Realised) <- rownames(Network_Realised) <- V(Network_igraph)$names
+  colnames(Network_Realised) <- rownames(Network_Realised) <- igraph::V(Network_igraph)$names
   
   ## Trait Adjacency Matrix
   # Figuring out trait differences between potentially interacting species

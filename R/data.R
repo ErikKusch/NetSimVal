@@ -6,6 +6,14 @@
 #' A vector with 10 values (all values = 200).
 "CarryingK_vec"
 
+#' Bioclimatic Niche Preferences
+#'
+#' A vector of bioclimatic niche preferences.
+#'
+#' @format ## `Niches_vec`
+#' A vector with 10 values.
+"Niches_vec"
+
 #' Initialising Information
 #'
 #' A list object containing data frame of initialising individuals and their bioclimatic niche preferences.

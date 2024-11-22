@@ -1,9 +1,16 @@
 Network_igraph <- Sim.Network(n_spec = 10, NetworkType = "Association", Sparcity = 0.5, MaxStrength = 1, seed = 42)
 use_data(Network_igraph)
+
 CarryingK_vec <- Sim.CarryingK(n_spec = 10, k_range = c(200,200), seed = 42)
 use_data(CarryingK_vec)
-Initialise_ls <- Sim.Initialise(n_spec = 10, n_individuals = 4e2,n_mode = "total", Env_range = c(0, 10), Trait_sd = 1, seed = 42)
-use_data(Initialise_ls)
+
+Niches_vec <- Sim.Niche(n_spec = 10, Env_range = c(0, 10), seed = 42)
+use_data(Niches_vec)
+
+Initialise_df <- Sim.Initialise(n_spec = 10, n_individuals = 4e2,n_mode = "total", Env_range = c(0, 10), 
+                                Trait_means = Niches_vec, Trait_sd = 1, seed = 42)
+use_data(Initialise_df)
+
 SimulationOutput <- Sim.Compute(d0 = 0.4,
                                 b0 = 0.6,
                                 env.xy = function(x = NULL, y = NULL){x},
@@ -14,7 +21,7 @@ SimulationOutput <- Sim.Compute(d0 = 0.4,
                                 Effect_Dis = 0.5,
                                 Network_igraph,
                                 k_vec = CarryingK_vec,
-                                ID_df = Initialise_ls$ID_df,
+                                ID_df = Initialise_df,
                                 Env_range = c(0, 10),
                                 seed = 42,
                                 verbose = TRUE, # whether to print progress in time as current time

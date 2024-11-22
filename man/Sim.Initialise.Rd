@@ -9,6 +9,7 @@ Sim.Initialise(
   n_individuals = 400,
   n_mode = "each",
   Env_range = c(0, 10),
+  Trait_means,
   Trait_sd = 1,
   seed = 42
 )
@@ -22,20 +23,23 @@ Sim.Initialise(
 
 \item{Env_range}{Numeric vector of length 2. Minimum and maximum values of environmental gradient.}
 
+\item{Trait_means}{Numeric. Mean for bioclimatic niche preference of each species. Must be same length as number specified in n_spec.}
+
 \item{Trait_sd}{Numeric. Standard deviation of trait distributions from which trait values of each individual are drawn.}
 
 \item{seed}{Numeric. Seed for random processes.}
 }
 \value{
-A list of length 2 containing (1) ID_df - the data frame of initialising individuals with columns ID, Trait, X, Y, and Species, and (2) Trait_means - a named vector of random mean trait values for each species.
+A data frame - the data frame of initialising individuals with columns ID, Trait, X, Y, and Species.
 }
 \description{
-This function generates a set of individuals placed at random across the simulation landscape in x and y dimensions. It also generates species-specific bioclimatic niche preferences and applies these to each individual with respect to their species membership.
+This function generates a set of individuals placed at random across the simulation landscape in x and y dimensions. It also applies species specific niche preferences to each individual with respect to their species membership.
 }
 \examples{
+Niches_vec <- Sim.Niche(n_spec = 10, Env_range = c(0, 10), seed = 42)
 Sim.Initialise(n_spec = 10, n_individuals = 4e2,n_mode = "each",
-               Env_range = c(0, 10), Trait_sd = 1, seed = 42)
+               Env_range = c(0, 10), Trait_means = Niches_vec, Trait_sd = 1, seed = 42)
 Sim.Initialise(n_spec = 20, n_individuals = 4e2,n_mode = "total",
-               Env_range = c(10, 100), Trait_sd = 2.5, seed = 42)
+               Env_range = c(10, 100), Trait_means = Niches_vec, Trait_sd = 2.5, seed = 42)
 
 }

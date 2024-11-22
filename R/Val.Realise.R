@@ -1,61 +1,68 @@
-#' Generate Random Association/Interaction Network Matrices
+#' Reduction of Network to Realisable Component
 #' 
-#' This function generates a random network matrix representing either an undirected (association) or directed (interaction) network matrix according to user specifications.
+#' Takes an association or interaction network object as well as the bioclimatic niche preferences of each species to compute which links stored in the network can be realised. The cutoff is calculated as the difference between the niche preferences of species pairs vs. Effect_Dis + Env_sd.
 #' 
-#' @param n_spec Numeric. Number of species / size of node set.
-#' @param NetworkType Character. Whether to create an interaction or association matrix. In an interaction matrix, columns act on rows. In an association matrix, entries are mirrored around the diagonal. Possible values: "Association" or "Interaction".
-#' @param Sparcity Numeric. Proportion of unique associations or interactions which are exactly 0.
-#' @param MaxStrength Numeric. Maximum value of associations or interactions.
-#' @param seed Numeric. Seed for random processes.
+#' @param Network_igraph An igraph object with association/interaction strength stored as "weight" attribute of edges. Output of Sim.Network().
+#' @param Trait_means Numeric. Mean for bioclimatic niche preference of each species.
+#' @param Effect_Dis Numeric. Distance within which neighbouring individuals interact with a focal individual.
+#' @param Env_sd Numeric. Habitat suitability in death rate function. Higher values allow individuals to persist in areas of greater environmental maladaptation.
 #' 
 #' @return An igraph object with association/interaction strength stored as "weight" attribute of edges.
 #' 
-#' @importFrom randcorr randcorr
+#' @importFrom igraph as_adjacency_matrix
+#' @importFrom igraph is_directed
+#' @importFrom igraph V
 #' @importFrom igraph graph_from_adjacency_matrix
-#' @importFrom igraph E
 #' 
 #' @examples
-#' Sim.Network(n_spec = 20,
-#'             NetworkType = "Association",
-#'             Sparcity = 0.5,
-#'             MaxStrength = 1,
-#'             seed = 42
-#' )
-#' 
-#' Sim.Network(n_spec = 10,
-#'             NetworkType = "Interaction",
-#'             Sparcity = 0,
-#'             MaxStrength = 20,
-#'             seed = 21
-#' )
+#' data("Niches_vec")
+#' data("Network_igraph")
+#' Val.Realise(Network_igraph = Network_igraph, Niches_vec = Niches_vec)
+#'
 #' @export
-Sim.Network <- function(n_spec = 20,
-                        NetworkType = "Association", # or "Association"
-                        Sparcity = 0.5,
-                        MaxStrength = 1,
-                        seed = 42){
-  set.seed(seed)
-  
-  if(!(NetworkType %in% c("Interaction", "Association"))){stop('NetworkType needs to be either "Interaction" or "Association"')}
-  
-  Rand_corr <- randcorr(n_spec) # establish random correlation matrix
-  if(NetworkType == "Interaction"){
-    Rand_corr[lower.tri(Rand_corr)] <- randcorr(n_spec)[lower.tri(randcorr(n_spec))]
-    Rand_corr[sample(which(!is.na(Rand_corr)), as.integer(sum(!is.na(Rand_corr))*Sparcity))] <- 0
-    Rand_corr <- graph_from_adjacency_matrix(adjmatrix = Rand_corr,
-                                             mode = "directed",
-                                             weighted = TRUE,
-                                             diag = FALSE)
+Val.Realise <- function(Network_igraph,
+                        Trait_means,
+                        Effect_Dis = 0.5,
+                        Env_sd = 2.5){
+  ## Vertex names
+  if(is.null(V(Network_igraph)$names)){
+    V(Network_igraph)$names <- paste0("Sp_", V(Network_igraph))
   }
-  if(NetworkType == "Association"){
-    Rand_corr[lower.tri(Rand_corr)] <- NA # make into undirected adjacency matrix representation
-    diag(Rand_corr) <- NA
-    Rand_corr[sample(which(!is.na(Rand_corr)), as.integer(sum(!is.na(Rand_corr))*Sparcity))] <- 0
-    Rand_corr <- graph_from_adjacency_matrix(adjmatrix = Rand_corr,
-                                             mode = "undirected",
-                                             weighted = TRUE,
-                                             diag = FALSE)
+  
+  ## Mode of network
+  mode <- ifelse(is_directed(Network_igraph), "directed", "undirected")
+  
+  ## Network Adjacency matrix
+  Network_Realised <- as.matrix(as_adjacency_matrix(Network_igraph, attr = "weight"))
+  colnames(Network_Realised) <- rownames(Network_Realised) <- V(Network_igraph)$names
+  
+  ## Trait Adjacency Matrix
+  # Figuring out trait differences between potentially interacting species
+  SPTrait_df <- data.frame(Niches_vec)
+  SPTrait_df$Species <- rownames(SPTrait_df)
+  colnames(SPTrait_df) <- c("Trait", "Species")
+  
+  SPTrait_df <- SPTrait_df[match(colnames(Network_Realised), SPTrait_df$Species), ]
+  SPTrait_mat <- abs(outer(SPTrait_df$Trait, SPTrait_df$Trait, '-'))
+  colnames(SPTrait_mat) <- rownames(SPTrait_mat) <- colnames(Network_Realised)
+  
+  TraitDiff_mat <- SPTrait_mat
+  
+  ## limitting to realised interactions
+  Network_Realised[(TraitDiff_mat) > (Env_sd+Effect_Dis)] <- 0 # anything greater apart in enviro pref than the interaction window + environmental sd cannot be realised
+  
+  ## make into matrix
+  Real_mat <- Network_Realised
+  diag(Real_mat) <- NA
+  if(mode != "directed"){
+    Real_mat[lower.tri(Real_mat) ] <- NA
   }
-  igraph::E(Rand_corr)$weight <-  igraph::E(Rand_corr)$weight*MaxStrength
-  return(Rand_corr)
+  
+  ## make into igraph object
+  Network_Real <- graph_from_adjacency_matrix(adjmatrix = Network_Realised,
+                                              mode = mode,
+                                              weighted = TRUE,
+                                              diag = FALSE)
+  
+  return(Network_Real)
 }

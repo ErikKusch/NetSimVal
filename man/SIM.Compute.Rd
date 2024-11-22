@@ -53,7 +53,7 @@ Sim.Compute(
 
 \item{verbose}{Logical. Whether to print simulation time and sampling interval.}
 
-\item{RunName}{Character. Name for .RData object written to disk.}
+\item{RunName}{Character. Name for temporary .RData object written to disk.}
 }
 \value{
 A list containing data frame object with the same columns as ID_df at each sampling interval defined via n_inter until t_max is reached.
@@ -62,25 +62,39 @@ A list containing data frame object with the same columns as ID_df at each sampl
 This function carries out spatially explicit, individual-based demographic simulation for the generation of data products ready for network inference.
 }
 \examples{
-Network_igraph <- Sim.Network(n_spec = 10, NetworkType = "Association", Sparcity = 0.5, MaxStrength = 1, seed = 42)
-CarryingK_vec <- Sim.CarryingK(n_spec = 10, k_range = c(200,200), seed = 42)
-Niches_vec <- Sim.Niche(n_spec = 10, Env_range = c(0, 10), seed = 42)
-Initialise_df <- Sim.Initialise(n_spec = 10, n_individuals = 4e2, n_mode = "total", Env_range = c(0, 10), Trait_means = Niches_vec, Trait_sd = 1, seed = 42)
-Sim.Compute(d0 = 0.4,
-            b0 = 0.6,
-            env.xy = function(x = NULL, y = NULL){x},
-            t_max = 10,
-            t_inter = 0.1,
-            sd = 2.5,
-            migration = 0.2,
-            Effect_Dis = 0.5,
-            Network_igraph,
-            k_vec = CarryingK_vec, 
-            ID_df = Initialise_df,
-            Env_range = c(0, 10),
-            seed = 42,
-            verbose = TRUE, # whether to print progress in time as current time
-            RunName = "TestRun"
-)
+data("Initialise_df")
+data("CarryingK_vec")
+data("Network_igraph")
+
+Effect_Mat <- igraph::as_adjacency_matrix(Network_igraph, attr = "weight") # columns affect rows
+rownames(Effect_Mat) <- colnames(Effect_Mat) <- names(CarryingK_vec)
+
+ID_df <- Sim.d0Update(ID_df = Initialise_df, which = "Initial", 
+                      event = NULL,
+                      env.xy = function(x = NULL, y = NULL){x}, 
+                      d0 = 0.4, b0 = 0.6, sd = 2.5, 
+                      Effect_Mat, 
+                      k_vec = CarryingK_vec, 
+                      Effect_Dis = 0.5, 
+                      seed = 42)
+
+Birth_df <- rbind(ID_df, ID_df[1,])
+Sim.d0Update(ID_df = Birth_df, which = Birth_df[401, ], # row 211 affected
+             event = "Birth",
+             env.xy = function(x = NULL, y = NULL){x}, 
+             d0 = 0.4, b0 = 0.6, sd = 2.5, 
+             Effect_Mat, 
+             k_vec = CarryingK_vec, 
+             Effect_Dis = 0.5, 
+             seed = 42)
+
+Sim.d0Update(ID_df = ID_df[-211, ], which = ID_df[211, ], # row 211 affected
+             event = "Death",
+             env.xy = function(x = NULL, y = NULL){x}, 
+             d0 = 0.4, b0 = 0.6, sd = 2.5, 
+             Effect_Mat, 
+             k_vec = CarryingK_vec, 
+             Effect_Dis = 0.5, 
+             seed = 42)
 
 }

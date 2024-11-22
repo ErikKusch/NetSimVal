@@ -16,11 +16,11 @@
 
 #' Initialising Information
 #'
-#' A list object containing data frame of initialising individuals and their bioclimatic niche preferences.
+#' A data frame object containing initialising individuals.
 #'
-#' @format ## `Initialise_ls`
-#' List of 2. (1) data frame containing 400 initialising individuals, (2) containing 10 values of biolcimatic niche preferences.
-"Initialise_ls"
+#' @format ## `Initialise_df`
+#' Data frame containing 400 initialising individuals.
+"Initialise_df"
 
 #' Simulated Network
 #'

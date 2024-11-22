@@ -24,10 +24,10 @@
 #' @importFrom igraph as_adjacency_matrix
 #' 
 #' @examples
-#' Network_igraph <- SIM.Network(n_spec = 10, NetworkType = "Association", Sparcity = 0.5, MaxStrength = 1, seed = 42)
+#' Network_igraph <- Sim.Network(n_spec = 10, NetworkType = "Association", Sparcity = 0.5, MaxStrength = 1, seed = 42)
 #' CarryingK_vec <- Sim.CarryingK(n_spec = 10, k_range = c(200,200), seed = 42)
 #' Initialise_ls <- Sim.Initialise(n_spec = 10, n_individuals = 4e2,n_mode = "total", Env_range = c(0, 10), Trait_sd = 1, seed = 42)
-#' SIM.Compute(d0 = 0.4,
+#' Sim.Compute(d0 = 0.4,
 #'             b0 = 0.6,
 #'             env.xy = function(x = NULL, y = NULL){x},
 #'             t_max = 10,
@@ -45,7 +45,7 @@
 #')
 #'
 #' @export
-SIM.Compute <- function(d0 = 0.4,
+Sim.Compute <- function(d0 = 0.4,
                      b0 = 0.6,
                      env.xy = function(x = NULL, y = NULL){x},
                      t_max = 10,

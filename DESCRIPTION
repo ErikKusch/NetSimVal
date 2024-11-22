@@ -13,3 +13,6 @@ Imports:
     igraph (>= 2.0.3),
     lubridate (>= 1.9.3),
     randcorr (>= 1.0)
+Depends: 
+    R (>= 2.10)
+LazyData: true

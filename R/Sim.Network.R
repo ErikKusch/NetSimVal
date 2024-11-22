@@ -15,28 +15,25 @@
 #' @importFrom igraph E
 #' 
 #' @examples
-#' SIM.Network(n_spec = 20,
+#' Sim.Network(n_spec = 20,
 #'             NetworkType = "Association",
 #'             Sparcity = 0.5,
 #'             MaxStrength = 1,
 #'             seed = 42
 #' )
 #' 
-#' SIM.Network(n_spec = 10,
+#' Sim.Network(n_spec = 10,
 #'             NetworkType = "Interaction",
 #'             Sparcity = 0,
 #'             MaxStrength = 20,
 #'             seed = 21
 #' )
 #' @export
-SIM.Network <- function(n_spec = 20,
+Sim.Network <- function(n_spec = 20,
                         NetworkType = "Association", # or "Association"
                         Sparcity = 0.5,
                         MaxStrength = 1,
                         seed = 42){
-  library(randcorr)
-  library(igraph)
-  
   set.seed(seed)
   
   if(!(NetworkType %in% c("Interaction", "Association"))){stop('NetworkType needs to be either "Interaction" or "Association"')}
@@ -59,6 +56,6 @@ SIM.Network <- function(n_spec = 20,
                                                      weighted = TRUE,
                                                      diag = FALSE)
   }
-  E(Rand_corr)$weight <-  E(Rand_corr)$weight*MaxStrength
+  igraph::E(Rand_corr)$weight <-  igraph::E(Rand_corr)$weight*MaxStrength
   return(Rand_corr)
 }

@@ -30,6 +30,14 @@
 #' igraph object containing 10 nodes and 23 links.
 "Network_igraph"
 
+#' Environmental Matrix
+#'
+#' An environmental matrix used for demographic simulations.
+#'
+#' @format ## `Env_mat`
+#' Environmental matrix of 1e3 rows and columns with environmental range 0-10 in either dimension
+"Env_mat"
+
 #' Simulation Output
 #'
 #' Output of simulation framework.

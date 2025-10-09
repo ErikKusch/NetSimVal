@@ -30,17 +30,19 @@ An igraph object with association/interaction strength stored as "weight" attrib
 This function generates a random network matrix representing either an undirected (association) or directed (interaction) network matrix according to user specifications.
 }
 \examples{
-Sim.Network(n_spec = 20,
-            NetworkType = "Association",
-            Sparcity = 0.5,
-            MaxStrength = 1,
-            seed = 42
+Sim.Network(
+  n_spec = 20,
+  NetworkType = "Association",
+  Sparcity = 0.5,
+  MaxStrength = 1,
+  seed = 42
 )
 
-Sim.Network(n_spec = 10,
-            NetworkType = "Interaction",
-            Sparcity = 0,
-            MaxStrength = 20,
-            seed = 21
+Sim.Network(
+  n_spec = 10,
+  NetworkType = "Interaction",
+  Sparcity = 0,
+  MaxStrength = 20,
+  seed = 21
 )
 }

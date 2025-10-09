@@ -7,7 +7,7 @@
 #' @param event Character. Either "Birth" or "Death".
 #' @param d0 Numeric. background death rate (gets altered by the environment and interactions).
 #' @param b0 Numeric. background birth rate (remains constant).
-#' @param env.xy Function with arguments X and Y. Translates X and Y coordinates into optimal local phenotype.
+#' @param env.xy Environmental matrix as produced by Sim.Space().
 #' @param sd Numeric. Habitat suitability in death rate function. Higher values allow individuals to persist in areas of greater environmental maladaptation.
 #' @param Effect_Mat Weighted adjacency matrix of association/interaction network.
 #' @param Effect_Dis Distance to which association/interaction effects are computed around individuals.
@@ -16,15 +16,9 @@
 #'
 #' @return An updated data frame of individuals and their dynamic death rates.
 #'
-#' @examples
-#' Initialise_df <- Sim.Initialise(n_spec = 10, n_individuals = 4e2, n_mode = "total", Env_range = c(0, 10), Trait_means = Niches_vec, Trait_sd = 1, seed = 42)
-#'
-#' @export
 Sim.d0Update <- function(
     ID_df, which = "Initial", event = NULL,
-    env.xy = function(x = NULL, y = NULL) {
-      x
-    },
+    env.xy,
     d0 = 0.4, b0 = 0.6, sd = 2.5,
     Effect_Mat,
     k_vec,
@@ -63,6 +57,11 @@ Sim.d0Update <- function(
   dt <- function(d0, d0P, d0E, d0Omega) {
     d0 + d0P * d0E - d0Omega
   }
+  Get.Environment <- function(x, y, env_mat) {
+    col <- which.min(abs(x - as.numeric(colnames(env_mat))))[1]
+    row <- which.min(abs(y - as.numeric(rownames(env_mat))))[1]
+    env_mat[row, col]
+  }
   ## queried d0 update
   if (which[1] == "Initial") {
     ## dynamic death rate components
@@ -74,8 +73,16 @@ Sim.d0Update <- function(
     )
     ID_df$d0P <- as.numeric(d0P_vec[match(ID_df$Species, names(d0P_vec))])
     ### environment
+    ID_df$Env <- apply(ID_df, 1, FUN = function(row){
+      # print(row)
+      Get.Environment(
+        x = as.numeric(row["X"]),
+        y = as.numeric(row["Y"]),
+        env_mat = env.xy
+      )
+    })
     ID_df$d0E <- d0E(
-      Tr = ID_df$Trait, Env = env.xy(x = ID_df$X, y = ID_df$Y),
+      Tr = ID_df$Trait, Env = ID_df$Env,
       sd = sd
     )
     ### Interactions
@@ -97,12 +104,13 @@ Sim.d0Update <- function(
     }
     ## environment
     if (event == "Birth") {
+      which$Env <- Get.Environment(
+          x = which$X,
+          y = which$Y,
+          env_mat = env.xy)
       ID_df$d0E[ID_df$ID == which$ID] <- d0E(
         Tr = which$Trait,
-        Env = env.xy(
-          x = which$X,
-          y = which$Y
-        ),
+        Env = which$Env,
         sd = sd
       )
     }

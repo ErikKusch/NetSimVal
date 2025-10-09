@@ -37,9 +37,13 @@ This function generates a set of individuals placed at random across the simulat
 }
 \examples{
 Niches_vec <- Sim.Niche(n_spec = 10, Env_range = c(0, 10), seed = 42)
-Sim.Initialise(n_spec = 10, n_individuals = 4e2,n_mode = "each",
-               Env_range = c(0, 10), Trait_means = Niches_vec, Trait_sd = 1, seed = 42)
-Sim.Initialise(n_spec = 20, n_individuals = 4e2,n_mode = "total",
-               Env_range = c(10, 100), Trait_means = Niches_vec, Trait_sd = 2.5, seed = 42)
+Sim.Initialise(
+  n_spec = 10, n_individuals = 4e2, n_mode = "each",
+  Env_range = c(0, 10), Trait_means = Niches_vec, Trait_sd = 1, seed = 42
+)
+Sim.Initialise(
+  n_spec = 20, n_individuals = 4e2, n_mode = "total",
+  Env_range = c(10, 100), Trait_means = Niches_vec, Trait_sd = 2.5, seed = 42
+)
 
 }

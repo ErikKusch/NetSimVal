@@ -11,9 +11,17 @@ Initialise_df <- Sim.Initialise(n_spec = 10, n_individuals = 4e2,n_mode = "total
                                 Trait_means = Niches_vec, Trait_sd = 1, seed = 42)
 use_data(Initialise_df)
 
+Env_mat <- Sim.Space(
+    x_range = c(0, 10), y_range = c(0, 10),
+    ncol = 1e3, nrow = 1e3,
+    x_gradient = function(x) x,
+    y_gradient = function(y) y
+)
+use_data(Env_mat)
+
 SimulationOutput <- Sim.Compute(d0 = 0.4,
                                 b0 = 0.6,
-                                env.xy = function(x = NULL, y = NULL){x},
+                                env.xy = Env_mat,
                                 t_max = 10,
                                 t_inter = 0.1,
                                 sd = 2.5,
@@ -22,7 +30,6 @@ SimulationOutput <- Sim.Compute(d0 = 0.4,
                                 Network_igraph,
                                 k_vec = CarryingK_vec,
                                 ID_df = Initialise_df,
-                                Env_range = c(0, 10),
                                 seed = 42,
                                 verbose = TRUE, # whether to print progress in time as current time
                                 RunName = "TestRun"

@@ -4,7 +4,7 @@
 #'
 #' @param d0 Numeric. background death rate (gets altered by the environment and interactions).
 #' @param b0 Numeric. background birth rate (remains constant).
-#' @param env.xy Function with arguments X and Y. Translates X and Y coordinates into optimal local phenotype.
+#' @param env.xy Environmental matrix as produced by Sim.Space().
 #' @param t_max Numeric. Maximum simulation time.
 #' @param t_inter Numeric. Interval length at which to record simulation outputs (measured in simulation time).
 #' @param sd Numeric. Habitat suitability in death rate function. Higher values allow individuals to persist in areas of greater environmental maladaptation.
@@ -13,7 +13,6 @@
 #' @param Network_igraph An igraph object with association/interaction strength stored as "weight" attribute of edges. Output of Sim.Network().
 #' @param k_vec Named vector containing carrying capacity for each species. Output of Sim.CarryingK().
 #' @param ID_df Data frame of initialising individuals with columns ID, Trait, X, Y, and Species. Output of Sim.Initialise()$ID_df.
-#' @param Env_range Numeric vector of length 2. Minimum and maximum values of environmental gradient.
 #' @param seed Numeric. Seed for random processes.
 #' @param verbose Logical. Whether to print simulation time and sampling interval.
 #' @param RunName Character. Name for temporary .RData object written to disk.
@@ -27,57 +26,30 @@
 #' data("Initialise_df")
 #' data("CarryingK_vec")
 #' data("Network_igraph")
-#'
-#' Effect_Mat <- igraph::as_adjacency_matrix(Network_igraph, attr = "weight") # columns affect rows
-#' rownames(Effect_Mat) <- colnames(Effect_Mat) <- names(CarryingK_vec)
-#'
-#' ID_df <- Sim.d0Update(
-#'   ID_df = Initialise_df, which = "Initial",
-#'   event = NULL,
-#'   env.xy = function(x = NULL, y = NULL) {
-#'     x
-#'   },
-#'   d0 = 0.4, b0 = 0.6, sd = 2.5,
-#'   Effect_Mat,
-#'   k_vec = CarryingK_vec,
-#'   Effect_Dis = 0.5,
-#'   seed = 42
-#' )
-#'
-#' Birth_df <- rbind(ID_df, ID_df[1, ])
-#' Sim.d0Update(
-#'   ID_df = Birth_df, which = Birth_df[401, ], # row 211 affected
-#'   event = "Birth",
-#'   env.xy = function(x = NULL, y = NULL) {
-#'     x
-#'   },
-#'   d0 = 0.4, b0 = 0.6, sd = 2.5,
-#'   Effect_Mat,
-#'   k_vec = CarryingK_vec,
-#'   Effect_Dis = 0.5,
-#'   seed = 42
-#' )
-#'
-#' Sim.d0Update(
-#'   ID_df = ID_df[-211, ], which = ID_df[211, ], # row 211 affected
-#'   event = "Death",
-#'   env.xy = function(x = NULL, y = NULL) {
-#'     x
-#'   },
-#'   d0 = 0.4, b0 = 0.6, sd = 2.5,
-#'   Effect_Mat,
-#'   k_vec = CarryingK_vec,
-#'   Effect_Dis = 0.5,
-#'   seed = 42
+#' data("Env_mat")
+#' 
+#' SimResult <- Sim.Compute(
+#'     d0 = 0.4,
+#'     b0 = 0.6,
+#'     env.xy = Env_mat,
+#'     t_max = 5,
+#'     t_inter = 0.1,
+#'     sd = 2.5,
+#'     migration = 0.2,
+#'     Effect_Dis = 0.5,
+#'     Network_igraph = Network_igraph,
+#'     k_vec = CarryingK_vec,
+#'     ID_df = Initialise_df,
+#'     seed = 42,
+#'     verbose = TRUE, # whether to print progress in time as current time
+#'     RunName = "Trial"
 #' )
 #'
 #' @export
 Sim.Compute <- function(
     d0 = 0.4,
     b0 = 0.6,
-    env.xy = function(x = NULL, y = NULL) {
-      x
-    },
+    env.xy, # space matrix
     t_max = 10,
     t_inter = 0.1,
     sd = 2.5,
@@ -86,7 +58,6 @@ Sim.Compute <- function(
     Network_igraph,
     k_vec,
     ID_df,
-    Env_range,
     seed = 42,
     verbose = TRUE, # whether to print progress in time as current time
     RunName = "") {
@@ -96,6 +67,10 @@ Sim.Compute <- function(
   ## Network as adjacency matrix
   Effect_Mat <- as_adjacency_matrix(Network_igraph, attr = "weight") # columns affect rows
   rownames(Effect_Mat) <- colnames(Effect_Mat) <- names(k_vec)
+
+  ## environmental range
+  Env_range_x <- range(as.numeric(colnames(Env_mat)))
+  Env_range_y <- range(as.numeric(rownames(Env_mat)))
 
   ## dynamic death rate initialisation
   ID_df <- Sim.d0Update(
@@ -148,10 +123,10 @@ Sim.Compute <- function(
       newloc.x <- append_df$X + movement.x
       newloc.y <- append_df$Y + movement.y
       ## ensuring species don't disperse beyond the environmental limit
-      newloc.x <- ifelse(newloc.x < Env_range[1], Env_range[1], newloc.x)
-      newloc.x <- ifelse(newloc.x > Env_range[2], Env_range[2], newloc.x)
-      newloc.y <- ifelse(newloc.y < Env_range[1], Env_range[1], newloc.y)
-      newloc.y <- ifelse(newloc.y > Env_range[2], Env_range[2], newloc.y)
+      newloc.x <- ifelse(newloc.x < Env_range_x[1], Env_range_x[1], newloc.x)
+      newloc.x <- ifelse(newloc.x > Env_range_x[2], Env_range_x[2], newloc.x)
+      newloc.y <- ifelse(newloc.y < Env_range_y[1], Env_range_y[1], newloc.y)
+      newloc.y <- ifelse(newloc.y > Env_range_y[2], Env_range_y[2], newloc.y)
       append_df$X <- newloc.x
       append_df$Y <- newloc.y
       ID_df <- rbind(ID_df, append_df)

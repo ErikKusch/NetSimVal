@@ -65,7 +65,7 @@ matrices_ls <- lapply(list(Network_igraph, Inferred_igraph), FUN = function(Netw
   mat <- as.matrix(igraph::as_adjacency_matrix(NetworkI, attr = "weight"))
   colnames(mat) <- rownames(mat) <- igraph::V(NetworkI)$names
   diag(mat) <- NA
-  if(!is_directed(NetworkI)){
+  if(!igraph::is_directed(NetworkI)){
     mat[lower.tri(mat) ] <- NA
   }
   mat
@@ -86,8 +86,9 @@ model_df <- data.frame(
   EnvDiff = as.vector(SPTrait_mat)
 )
 model_df <- na.omit(model_df)
-
+\dontrun{
 (Detection <- Val.Behaviour(model_df, mode = "Detection"))
 (Inference <- Val.Behaviour(model_df, mode = "Inference"))
+}
 
 }

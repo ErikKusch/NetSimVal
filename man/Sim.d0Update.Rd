@@ -8,9 +8,7 @@ Sim.d0Update(
   ID_df,
   which = "Initial",
   event = NULL,
-  env.xy = function(x = NULL, y = NULL) {
-     x
- },
+  env.xy,
   d0 = 0.4,
   b0 = 0.6,
   sd = 2.5,
@@ -27,7 +25,7 @@ Sim.d0Update(
 
 \item{event}{Character. Either "Birth" or "Death".}
 
-\item{env.xy}{Function with arguments X and Y. Translates X and Y coordinates into optimal local phenotype.}
+\item{env.xy}{Environmental matrix as produced by Sim.Space().}
 
 \item{d0}{Numeric. background death rate (gets altered by the environment and interactions).}
 
@@ -48,9 +46,4 @@ An updated data frame of individuals and their dynamic death rates.
 }
 \description{
 This is a helper function for updating of dynamic death rates in the simulation run.
-}
-\examples{
-Initialise_df <- Sim.Initialise(n_spec = 10, n_individuals = 4e2, n_mode = "total", Env_range = c(0, 10), Trait_means = Niches_vec, Trait_sd = 1, seed = 42)
-
-
 }

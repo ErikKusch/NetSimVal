@@ -39,7 +39,7 @@
 #'   mat <- as.matrix(igraph::as_adjacency_matrix(NetworkI, attr = "weight"))
 #'   colnames(mat) <- rownames(mat) <- igraph::V(NetworkI)$names
 #'   diag(mat) <- NA
-#'   if(!is_directed(NetworkI)){
+#'   if(!igraph::is_directed(NetworkI)){
 #'     mat[lower.tri(mat) ] <- NA
 #'   }
 #'   mat
@@ -60,9 +60,10 @@
 #'   EnvDiff = as.vector(SPTrait_mat)
 #' )
 #' model_df <- na.omit(model_df)
-#' 
+#' \dontrun{
 #' (Detection <- Val.Behaviour(model_df, mode = "Detection"))
 #' (Inference <- Val.Behaviour(model_df, mode = "Inference"))
+#' }
 #' 
 #' @export
 Val.Behaviour <- function(model_df, mode = "Detection", nWarmup = 3e3, nSamples = 1e4, nChains = 4, nCores = 4, seed = 42){

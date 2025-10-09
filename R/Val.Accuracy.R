@@ -25,7 +25,7 @@ Val.Accuracy <- function(Network1, Network2){
     mat <- as.matrix(as_adjacency_matrix(NetworkI, attr = "weight"))
     colnames(mat) <- rownames(mat) <- igraph::V(NetworkI)$names
     diag(mat) <- NA
-    if(!is_directed(NetworkI)){
+    if(!igraph::is_directed(NetworkI)){
       mat[lower.tri(mat) ] <- NA
     }
     sign(mat)

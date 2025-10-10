@@ -32,7 +32,6 @@ Sim.Space <- function(
     x_range, y_range, ncol = 100, nrow = 100,
     x_gradient = function(x) x,
     y_gradient = function(y) y) {
-
     # Create sequences for X and Y axes
     x_seq <- seq(x_range[1], x_range[2], length.out = ncol)
     y_seq <- seq(y_range[1], y_range[2], length.out = nrow)
@@ -50,7 +49,7 @@ Sim.Space <- function(
     # Outer product to create 2D grid: each cell is x + y (or x * y, etc.)
     grid <- outer(y_vals, x_vals, "+") # or "*", depending on desired effect
     colnames(grid) <- x_seq
-    rownames(grid) <- y_seq
+    rownames(grid) <- rev(y_seq)
 
     return(grid)
 }

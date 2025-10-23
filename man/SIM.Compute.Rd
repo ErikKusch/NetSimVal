@@ -12,6 +12,7 @@ Sim.Compute(
   t_inter = 0.1,
   sd = 2.5,
   migration = 0.2,
+  range = 0.05,
   Effect_Dis = 0.5,
   Network_igraph,
   k_vec,
@@ -34,7 +35,9 @@ Sim.Compute(
 
 \item{sd}{Numeric. Habitat suitability in death rate function. Higher values allow individuals to persist in areas of greater environmental maladaptation.}
 
-\item{migration}{Numeric. Standard deviation of 0-centred normal dsitribution from which natal dispersal is drawn.}
+\item{migration}{Numeric. Standard deviation of 0-centred normal distribution from which natal dispersal is drawn.}
+
+\item{range}{Numeric. Distance around a birth event within which the chance of a birth to occur are high (i.e. the flat-top portion of a bivariate flat-top normal distribution).}
 
 \item{Effect_Dis}{Numeric. Distance within which neighbouring individuals interact with a focal individual.}
 
@@ -70,6 +73,7 @@ SimResult <- Sim.Compute(
     t_inter = 0.1,
     sd = 2.5,
     migration = 0.2,
+    range = 0.05,
     Effect_Dis = 0.5,
     Network_igraph = Network_igraph,
     k_vec = CarryingK_vec,

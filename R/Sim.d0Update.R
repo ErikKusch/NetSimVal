@@ -30,9 +30,17 @@ Sim.d0Update <- function(
   d0P <- function(N, b0, d0, k) {
     N * (b0 - d0) / k
   }
-  d0E <- function(Tr, Env, sd) {
-    exp((abs(Tr - Env) / sd)^2)
+
+  d0E <- function(Tr, Env, sd, range) {
+    x <- abs(Tr - Env)
+    if(x < range){
+      res <- exp(((range/2) / sd)^2)
+    }else{
+      res <- exp(((x - range/2) / sd)^2)
+    }
+    res
   }
+  
   d0Omega <- function(Effect_Mat, Effect_Dis, ID_df, i) {
     Abundances_i <- rep(0, ncol(Effect_Mat))
     names(Abundances_i) <- colnames(Effect_Mat)

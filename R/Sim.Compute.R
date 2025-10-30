@@ -8,7 +8,8 @@
 #' @param t_max Numeric. Maximum simulation time.
 #' @param t_inter Numeric. Interval length at which to record simulation outputs (measured in simulation time).
 #' @param sd Numeric. Habitat suitability in death rate function. Higher values allow individuals to persist in areas of greater environmental maladaptation.
-#' @param migration Numeric. Standard deviation of 0-centred normal dsitribution from which natal dispersal is drawn.
+#' @param migration Numeric. Standard deviation of 0-centred normal distribution from which natal dispersal is drawn.
+#' @param range Numeric. Distance around a birth event within which the chance of a birth to occur are high (i.e. the flat-top portion of a bivariate flat-top normal distribution).
 #' @param Effect_Dis Numeric. Distance within which neighbouring individuals interact with a focal individual.
 #' @param Network_igraph An igraph object with association/interaction strength stored as "weight" attribute of edges. Output of Sim.Network().
 #' @param k_vec Named vector containing carrying capacity for each species. Output of Sim.CarryingK().
@@ -36,6 +37,7 @@
 #'     t_inter = 0.1,
 #'     sd = 2.5,
 #'     migration = 0.2,
+#'     range = 0.05,
 #'     Effect_Dis = 0.5,
 #'     Network_igraph = Network_igraph,
 #'     k_vec = CarryingK_vec,
@@ -54,6 +56,7 @@ Sim.Compute <- function(
     t_inter = 0.1,
     sd = 2.5,
     migration = 0.2,
+    range = 0.05,
     Effect_Dis = 0.5,
     Network_igraph,
     k_vec,
@@ -118,10 +121,14 @@ Sim.Compute <- function(
     if (event_EV == "Birth") {
       append_df <- ID_df[ID_df$ID == event_ID, ]
       append_df$ID <- max(ID_df$ID) + 1
-      movement.x <- rnorm(1, 0, migration)
-      movement.y <- rnorm(1, 0, migration)
-      newloc.x <- append_df$X + movement.x
-      newloc.y <- append_df$Y + movement.y
+      newloc.xy <- rFlatTopNorm(1, 
+                                mean = c(append_df$X, append_df$Y),
+                                sd = migration,
+                                range = range,
+                                truncDist = Effect_Dis)
+      newloc.x <- newloc.xy[1]
+      newloc.y <- newloc.xy[2]
+
       ## ensuring species don't disperse beyond the environmental limit
       newloc.x <- ifelse(newloc.x < Env_range_x[1], Env_range_x[1], newloc.x)
       newloc.x <- ifelse(newloc.x > Env_range_x[2], Env_range_x[2], newloc.x)

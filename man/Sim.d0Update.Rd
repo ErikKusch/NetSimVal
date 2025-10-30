@@ -12,7 +12,10 @@ Sim.d0Update(
   d0 = 0.4,
   b0 = 0.6,
   sd = 2.5,
-  beta = 1,
+  scale.env = 1,
+  scale.interac = 1,
+  max.env = Inf,
+  max.interac = Inf,
   Effect_Mat,
   k_vec,
   Effect_Dis = 0.5,
@@ -34,7 +37,13 @@ Sim.d0Update(
 
 \item{sd}{Numeric. Habitat suitability in death rate function. Higher values allow individuals to persist in areas of greater environmental maladaptation.}
 
-\item{beta}{Numeric. Scaling factor for strength of interaction effects on death rate.}
+\item{scale.env}{Numeric. Scaling factor for strength of environmental effects on death rate.}
+
+\item{scale.interac}{Numeric. Scaling factor for strength of interaction effects on death rate.}
+
+\item{max.env}{Numeric. Maximum environmental and niche prefence mismatch past which death is inevitable.}
+
+\item{max.interac}{Numeric. Maximum interaction effect at or past which birth or death is inevitable.}
 
 \item{Effect_Mat}{Weighted adjacency matrix of association/interaction network.}
 
@@ -43,6 +52,8 @@ Sim.d0Update(
 \item{Effect_Dis}{Distance to which association/interaction effects are computed around individuals.}
 
 \item{seed}{Numeric. Seed for random processes.}
+
+\item{beta}{Numeric. Scaling factor for strength of interaction effects on death rate.}
 }
 \value{
 An updated data frame of individuals and their dynamic death rates.

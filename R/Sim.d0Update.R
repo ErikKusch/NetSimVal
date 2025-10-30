@@ -7,6 +7,10 @@
 #' @param event Character. Either "Birth" or "Death".
 #' @param d0 Numeric. background death rate (gets altered by the environment and interactions).
 #' @param b0 Numeric. background birth rate (remains constant).
+#' @param scale.env Numeric. Scaling factor for strength of environmental effects on death rate.
+#' @param scale.interac Numeric. Scaling factor for strength of interaction effects on death rate.
+#' @param max.env Numeric. Maximum environmental and niche prefence mismatch past which death is inevitable.
+#' @param max.interac Numeric. Maximum interaction effect at or past which birth or death is inevitable.
 #' @param env.xy Environmental matrix as produced by Sim.Space().
 #' @param beta Numeric. Scaling factor for strength of interaction effects on death rate.
 #' @param sd Numeric. Habitat suitability in death rate function. Higher values allow individuals to persist in areas of greater environmental maladaptation.
@@ -22,7 +26,9 @@
 Sim.d0Update <- function(
     ID_df, which = "Initial", event = NULL,
     env.xy,
-    d0 = 0.4, b0 = 0.6, sd = 2.5, beta = 1,
+    d0 = 0.4, b0 = 0.6, sd = 2.5,
+    scale.env = 1, scale.interac = 1,
+    max.env = Inf, max.interac = Inf,
     Effect_Mat,
     k_vec,
     Effect_Dis = 0.5,
@@ -34,12 +40,17 @@ Sim.d0Update <- function(
     N * (b0 - d0) / k
   }
 
-  d0E <- function(Tr, Env, sd) {
+  d0E <- function(Tr, Env, sd, max.env) {
     x <- abs(Tr - Env)
-    exp((x/ sd)^2)
+    if(x>max.env){
+      res <- Inf
+    }else{
+      res <- exp((x/ sd)^2)
+    }
+    res
   }
   
-  d0Omega <- function(Effect_Mat, Effect_Dis, ID_df, i) {
+  d0Omega <- function(Effect_Mat, Effect_Dis, ID_df, i, max.interac) {
     Abundances_i <- rep(0, ncol(Effect_Mat))
     names(Abundances_i) <- colnames(Effect_Mat)
     Abundances_obs <- table(ID_df[-i, ][
@@ -58,10 +69,31 @@ Sim.d0Update <- function(
     } else {
       FinalEffect_i <- 0
     }
+    if(FinalEffect_i > max.interac){
+      FinalEffect_i <- Inf
+    }
+    if(FinalEffect_i < max.interac){
+      FinalEffect_i <- -Inf
+    }
     return(FinalEffect_i)
   }
-  dt <- function(d0, d0P, d0E, d0Omega, beta) {
-    (d0 * d0P * d0E) * exp(-beta*d0Omega)
+  dt <- function(d0, d0P, d0E, d0Omega, scale.env, scale.interac) {
+    dt <- d0 * d0P + scale.env * d0E - scale.interac * d0Omega
+    ## if both environmental and interaction effects are infinite and of opposing sign they cancel each other out and we set death rate to population dynamic component only
+    if(is.na(d0E + d0Omega)){
+      dt <- d0 * d0P
+    }
+
+    ## if death rate is negative set to 0 so that death is impossible
+    if(dt<0){
+      dt <- 0 
+    }
+
+    ## if death rate is infinite positive set to Inf (inevitable death)
+    if(dt==Inf){
+      dt <- Inf
+    }
+    dt
   }
   Get.Environment <- function(x, y, env_mat) {
     col <- which.min(abs(x - as.numeric(colnames(env_mat))))[1]
@@ -89,13 +121,13 @@ Sim.d0Update <- function(
     })
     ID_df$d0E <- d0E(
       Tr = ID_df$Trait, Env = ID_df$Env,
-      sd = sd
+      sd = sd, max.env = max.env
     )
     ### Interactions
     ID_df$d0Omega <- sapply(1:nrow(ID_df), FUN = function(i) {
       d0Omega(
         Effect_Mat = Effect_Mat, Effect_Dis = Effect_Dis,
-        ID_df = ID_df, i = i
+        ID_df = ID_df, i = i, max.interac = max.interac
       )
     })
   } else {
@@ -117,7 +149,8 @@ Sim.d0Update <- function(
       ID_df$d0E[ID_df$ID == which$ID] <- d0E(
         Tr = which$Trait,
         Env = which$Env,
-        sd = sd
+        sd = sd,
+        max.env = max.env
       )
     }
     ## interactions
@@ -128,7 +161,7 @@ Sim.d0Update <- function(
       ID_df$d0Omega[ID_df$ID %in% newinterac] <- sapply(newinterac, FUN = function(i) {
         d0Omega(
           Effect_Mat = Effect_Mat, Effect_Dis = Effect_Dis,
-          ID_df = ID_df, i = i
+          ID_df = ID_df, i = i, max.interac = max.interac
         )
       })
     }
@@ -137,8 +170,10 @@ Sim.d0Update <- function(
     d0 = d0,
     d0P = ID_df$d0P,
     d0E = ID_df$d0E,
-    d0Omega = ID_df$d0Omega
+    d0Omega = ID_df$d0Omega,
+    scale.env = scale.env,
+    scale.interac = scale.interac
   )
-  ID_df$dt[ID_df$dt < 0] <- 0 # make sure probabilities are never < 0
+  # ID_df$dt[ID_df$dt < 0] <- 0 # make sure probabilities are never < 0
   return(ID_df)
 }

@@ -8,11 +8,14 @@
 #' @param ID_df Data frame of initialising individuals with columns ID, Trait, X, Y, and Species. Output of Sim.Initialise()$ID_df.
 #' @param env.xy Environmental matrix as produced by Sim.Space(). Cells contain environmental values whereas column and row names contain spatial coordinates.
 #' @param env.sd Numeric. Habitat suitability in death rate function. Higher values allow individuals to persist in areas of greater environmental maladaptation.
+#' @param scale.env Numeric. Scaling factor for strength of environmental effects on death rate.
+#' @param max.env Numeric. Maximum environmental and niche prefence mismatch past which death is inevitable.
 #' @param mig.sd Numeric. Standard deviation of 0-centred normal distribution from which natal dispersal is drawn.
 #' @param mig.top Numeric. Distance around a birth event within which the chance of a birth to occur are high (i.e. the flat-top portion of a bivariate flat-top normal distribution).
 #' @param interac.maxdis Numeric. Distance within which neighbouring individuals interact with a focal individual.
 #' @param interac.igraph An igraph object with association/interaction strength stored as "weight" attribute of edges. Output of Sim.Network().
-#' @param interac.scale Numeric. Scaling factor for strength of interaction effects on death rate.
+#' @param scale.interac Numeric. Scaling factor for strength of interaction effects on death rate.
+#' @param max.interac Numeric. Maximum interaction effect at or past which birth or death is inevitable.
 #' @param Sim.t.max Numeric. Maximum simulation time.
 #' @param Sim.t.inter Numeric. Interval length at which to record simulation outputs (measured in simulation time).
 #' @param seed Numeric. Seed for random processes.
@@ -44,11 +47,14 @@
 #'     env.sd = 2.5,
 #'     mig.sd = 0.2,
 #'     mig.top = 0.05,
+#'     scale.env = 1,
+#'     max.env = Inf,
 #' 
 #'     # Interaction parameters
 #'     interac.maxdis = 0.5,
 #'     interac.igraph = Network_igraph,
-#'     interac.scale = 1,
+#'     scale.interac = 1,
+#'     max.interac = Inf,
 #' 
 #'     # Simulation parameters
 #'     Sim.t.max = 5,
@@ -66,11 +72,14 @@ Sim.Compute <- function(
     ID_df,
     env.xy, # space matrix
     env.sd = 2.5,
+    scale.env = 1,
+    max.env = Inf,
     mig.sd = 0.2,
     mig.top = 0.05,
     interac.maxdis = 0.5,
     interac.igraph,
-    interac.scale = 1,
+    scale.interac = 1,
+    max.interac = Inf,
     Sim.t.max = 10,
     Sim.t.inter = 0.1,
     seed = 42,
@@ -93,7 +102,8 @@ Sim.Compute <- function(
     env.xy = env.xy, d0 = d0, b0 = b0, sd = env.sd,
     Effect_Mat = Effect_Mat, k_vec = k_vec,
     Effect_Dis = interac.maxdis, seed = seed,
-    beta = interac.scale
+    scale.env = scale.env, scale.interac = scale.interac,
+    max.env = max.env, max.interac = max.interac
   )
 
   ## list object to store individuals at each time step
@@ -162,7 +172,8 @@ Sim.Compute <- function(
       env.xy = env.xy, d0 = d0, b0 = b0, sd = env.sd,
       Effect_Mat = Effect_Mat, k_vec = k_vec,
       Effect_Dis = interac.maxdis, seed = round(t, 3) * 1e4 + seed,
-      beta = interac.scale
+      scale.env = scale.env, scale.interac = scale.interac,
+      max.env = max.env, max.interac = max.interac
     )
     ## Gillespie time
     ### identify by how much time advances

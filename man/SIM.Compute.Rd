@@ -11,11 +11,14 @@ Sim.Compute(
   ID_df,
   env.xy,
   env.sd = 2.5,
+  scale.env = 1,
+  max.env = Inf,
   mig.sd = 0.2,
   mig.top = 0.05,
   interac.maxdis = 0.5,
   interac.igraph,
-  interac.scale = 1,
+  scale.interac = 1,
+  max.interac = Inf,
   Sim.t.max = 10,
   Sim.t.inter = 0.1,
   seed = 42,
@@ -36,6 +39,10 @@ Sim.Compute(
 
 \item{env.sd}{Numeric. Habitat suitability in death rate function. Higher values allow individuals to persist in areas of greater environmental maladaptation.}
 
+\item{scale.env}{Numeric. Scaling factor for strength of environmental effects on death rate.}
+
+\item{max.env}{Numeric. Maximum environmental and niche prefence mismatch past which death is inevitable.}
+
 \item{mig.sd}{Numeric. Standard deviation of 0-centred normal distribution from which natal dispersal is drawn.}
 
 \item{mig.top}{Numeric. Distance around a birth event within which the chance of a birth to occur are high (i.e. the flat-top portion of a bivariate flat-top normal distribution).}
@@ -44,7 +51,9 @@ Sim.Compute(
 
 \item{interac.igraph}{An igraph object with association/interaction strength stored as "weight" attribute of edges. Output of Sim.Network().}
 
-\item{interac.scale}{Numeric. Scaling factor for strength of interaction effects on death rate.}
+\item{scale.interac}{Numeric. Scaling factor for strength of interaction effects on death rate.}
+
+\item{max.interac}{Numeric. Maximum interaction effect at or past which birth or death is inevitable.}
 
 \item{Sim.t.max}{Numeric. Maximum simulation time.}
 
@@ -80,11 +89,14 @@ SimResult <- Sim.Compute(
     env.sd = 2.5,
     mig.sd = 0.2,
     mig.top = 0.05,
+    scale.env = 1,
+    max.env = Inf,
 
     # Interaction parameters
     interac.maxdis = 0.5,
     interac.igraph = Network_igraph,
-    interac.scale = 1,
+    scale.interac = 1,
+    max.interac = Inf,
 
     # Simulation parameters
     Sim.t.max = 5,

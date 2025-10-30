@@ -40,6 +40,8 @@ Sim.d0Update(
 \item{Effect_Dis}{Distance to which association/interaction effects are computed around individuals.}
 
 \item{seed}{Numeric. Seed for random processes.}
+
+\item{alpha}{Numeric. Scaling factor for interaction effects on death rate.}
 }
 \value{
 An updated data frame of individuals and their dynamic death rates.

@@ -7,6 +7,7 @@
 #' @param event Character. Either "Birth" or "Death".
 #' @param d0 Numeric. background death rate (gets altered by the environment and interactions).
 #' @param b0 Numeric. background birth rate (remains constant).
+#' @param alpha Numeric. Scaling factor for interaction effects on death rate.
 #' @param env.xy Environmental matrix as produced by Sim.Space().
 #' @param sd Numeric. Habitat suitability in death rate function. Higher values allow individuals to persist in areas of greater environmental maladaptation.
 #' @param Effect_Mat Weighted adjacency matrix of association/interaction network.
@@ -60,7 +61,7 @@ Sim.d0Update <- function(
     return(FinalEffect_i)
   }
   dt <- function(d0, d0P, d0E, d0Omega) {
-    d0 + d0P * d0E - d0Omega
+    d0 + d0P * d0E - alpha * d0Omega
   }
   Get.Environment <- function(x, y, env_mat) {
     col <- which.min(abs(x - as.numeric(colnames(env_mat))))[1]

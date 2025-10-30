@@ -1,9 +1,11 @@
 Package: NetSimVal
 Title: Network Simulation Inference Validation
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: 
     person("Erik", "Kusch", , "erik.kusch@nhm.uio.no", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-4984-7646"))
+    person("F. Guillaume", "Blanchet", , "f.guillaume.blanchet@usherbrooke.ca", role = c("aut"),
+           comment = c(ORCID = "0000-0001-5149-2488"))
 Description: R package for spatially explicit, individual-based demographic simulation for the generation of data products ready for network inference and validation of said inference.
 License: MIT + file LICENSE
 Encoding: UTF-8

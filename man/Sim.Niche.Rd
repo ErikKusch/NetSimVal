@@ -24,3 +24,6 @@ Sim.Niche(n_spec = 20, Env_range = c(0,10), seed = 42)
 Sim.Niche(n_spec = 15, Env_range = c(11,33), seed = 42)
 
 }
+\author{
+Erik Kusch, Natural History Museum, University of Oslo, Norway.
+}

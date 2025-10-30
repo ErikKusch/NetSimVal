@@ -13,7 +13,9 @@
 #' @param Effect_Dis Distance to which association/interaction effects are computed around individuals.
 #' @param k_vec Named vector containing carrying capacity for each species. Output of Sim.CarryingK().
 #' @param seed Numeric. Seed for random processes.
-#'
+#' 
+#' @author Erik Kusch, Natural History Museum, University of Oslo, Norway.
+#' 
 #' @return An updated data frame of individuals and their dynamic death rates.
 #'
 Sim.d0Update <- function(

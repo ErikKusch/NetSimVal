@@ -13,7 +13,9 @@
 #' @importFrom randcorr randcorr
 #' @importFrom igraph graph_from_adjacency_matrix
 #' @importFrom igraph E
-#'
+#' 
+#' @author Erik Kusch, Natural History Museum, University of Oslo, Norway.
+#' 
 #' @examples
 #' Sim.Network(
 #'   n_spec = 20,

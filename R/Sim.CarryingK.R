@@ -8,6 +8,8 @@
 #' 
 #' @return A named vector of random carrying capacity values for each species.
 #' 
+#' @author Erik Kusch, Natural History Museum, University of Oslo, Norway.
+#' 
 #' @examples
 #' Sim.CarryingK(n_spec = 20, k_range = c(200,200), seed = 42)
 #' Sim.CarryingK(n_spec = 20, k_range = c(100,300), seed = 42)

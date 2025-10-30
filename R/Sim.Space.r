@@ -10,7 +10,9 @@
 #' @param y_gradient Function that defines how values change along the y-axis. Default is the identity function resulting in a linear gradient.
 #'
 #' @return A matrix where cells report environmental values while column and row names report X and Y coordinates, respectively.
-#'
+#' 
+#' @author Erik Kusch, Natural History Museum, University of Oslo, Norway.
+#' 
 #' @examples
 #' # 1. Simple linear gradient matrix
 #' mat <- Sim.Space(

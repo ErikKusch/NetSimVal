@@ -14,8 +14,6 @@
 #' 
 #' Even if the function samples from a bivariate flat-top normal distribution, it is designed to focus only on a special case where the standard deviation (`sd`) and the radius of a circle in which the flat-top of the kernel is defined (`range`) is unique. In doing so, the function assumes weights are equal in both direction. 
 #' 
-#' If the `range` is set at 0
-#' 
 #' @return A two-column matrix with the sample from the distribution 
 #' 
 #' @author F. Guillaume Blanchet, Département de biologie, mathématiques et des sciences de la santé communautaire, Université de Sherbrooke, Canada. 
@@ -24,8 +22,7 @@
 #' rFlatTopNorm(10)
 #' rFlatTopNorm(5, mean = c(10, 12), sd = 3, range = 1, truncDist = 10)
 #' 
-#' @export
-rFlatTopNorm<-function(n, mean = c(0, -1), sd = 1, range = 2, truncDist = 5){
+rFlatTopNorm <- function(n, mean = c(0, -1), sd = 1, range = 2, truncDist = 5){
 
   # Result object
   result <- matrix(NA, nrow = 0, ncol = 2)
@@ -51,7 +48,7 @@ rFlatTopNorm<-function(n, mean = c(0, -1), sd = 1, range = 2, truncDist = 5){
       # If it is not
     }else{
       # Bivariate normal distribution outside the flat top
-      acceptProb <- exp(-(min(sqrt((((x - cx)^2)+((y - cy)^2)) / (sdDistr^2))))^2)
+      acceptProb <- exp(-(min(sqrt((((x - cx)^2)+((y - cy)^2)) / (sd^2))))^2)
     }
     
     # Rejection sampling

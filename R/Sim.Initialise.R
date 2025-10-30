@@ -11,7 +11,9 @@
 #' @param seed Numeric. Seed for random processes.
 #'
 #' @return A data frame - the data frame of initialising individuals with columns ID, Trait, X, Y, and Species.
-#'
+#' 
+#' @author Erik Kusch, Natural History Museum, University of Oslo, Norway.
+#' 
 #' @examples
 #' Niches_vec <- Sim.Niche(n_spec = 10, Env_range = c(0, 10), seed = 42)
 #' Sim.Initialise(

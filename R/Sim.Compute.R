@@ -22,7 +22,9 @@
 #'
 #' @importFrom lubridate seconds_to_period
 #' @importFrom igraph as_adjacency_matrix
-#'
+#' 
+#' @author Erik Kusch, Natural History Museum, University of Oslo, Norway.
+#' 
 #' @examples
 #' data("Initialise_df")
 #' data("CarryingK_vec")

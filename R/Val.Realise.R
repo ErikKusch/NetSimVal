@@ -8,7 +8,9 @@
 #' @param Env_sd Numeric. Habitat suitability in death rate function. Higher values allow individuals to persist in areas of greater environmental maladaptation.
 #'
 #' @return An igraph object with association/interaction strength stored as "weight" attribute of edges.
-#'
+#' 
+#' @author Erik Kusch, Natural History Museum, University of Oslo, Norway.
+#' 
 #' @importFrom igraph as_adjacency_matrix
 #' @importFrom igraph is_directed
 #' @importFrom igraph V

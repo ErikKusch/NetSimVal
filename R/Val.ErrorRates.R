@@ -19,7 +19,9 @@
 #' @importFrom igraph V
 #' @importFrom igraph as_adjacency_matrix
 #' @importFrom igraph is_directed
-#'
+#' 
+#' @author Erik Kusch, Natural History Museum, University of Oslo, Norway.
+#' 
 #' @examples
 #' data("Network_igraph")
 #' data("Inferred_igraph")

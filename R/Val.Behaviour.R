@@ -22,6 +22,8 @@
 #'  - Negative ... brmsfit object describing the Bayesian model run to identify either inference or detection behaviour for negative inferred links
 #'  - Absent ... brmsfit object describing the Bayesian model run to identify either inference or detection behaviour for absent inferred links
 #' 
+#' @author Erik Kusch, Natural History Museum, University of Oslo, Norway.
+#' 
 #' @importFrom brms brm
 #' @importFrom brms bernoulli
 #' 

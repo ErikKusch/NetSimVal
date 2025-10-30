@@ -92,3 +92,6 @@ model_df <- na.omit(model_df)
 }
 
 }
+\author{
+Erik Kusch, Natural History Museum, University of Oslo, Norway.
+}

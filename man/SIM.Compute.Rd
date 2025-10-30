@@ -84,3 +84,6 @@ SimResult <- Sim.Compute(
 )
 
 }
+\author{
+Erik Kusch, Natural History Museum, University of Oslo, Norway.
+}

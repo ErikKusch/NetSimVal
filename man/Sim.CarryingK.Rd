@@ -24,3 +24,6 @@ Sim.CarryingK(n_spec = 20, k_range = c(200,200), seed = 42)
 Sim.CarryingK(n_spec = 20, k_range = c(100,300), seed = 42)
 
 }
+\author{
+Erik Kusch, Natural History Museum, University of Oslo, Norway.
+}

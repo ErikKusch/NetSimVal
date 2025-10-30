@@ -49,3 +49,6 @@ mat <- Sim.Space(
     y_gradient = function(y) 1
 )
 }
+\author{
+Erik Kusch, Natural History Museum, University of Oslo, Norway.
+}

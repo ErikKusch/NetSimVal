@@ -46,3 +46,6 @@ Sim.Network(
   seed = 21
 )
 }
+\author{
+Erik Kusch, Natural History Museum, University of Oslo, Norway.
+}

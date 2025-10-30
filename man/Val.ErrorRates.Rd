@@ -34,3 +34,6 @@ data("Inferred_igraph")
 Val.ErrorRates(Network1 = Network_igraph, Network2 = Inferred_igraph)
 
 }
+\author{
+Erik Kusch, Natural History Museum, University of Oslo, Norway.
+}

@@ -27,8 +27,6 @@ This function generates samples from a bivariate flat-top normal distribution.
 Rejection sampling is used to carry out the sampling using as a starting point a random sample from a uniform distribution bounded by the truncation distance around the mean. Because the distribution function is continuous and unbounded, conceptually, the truncation could be +/- infinite in both dimensions, but since rejection-sampling is used this would not be computationally efficient. In this respect, we recommend to choose the truncation distance (\code{truncDist}) using a reasonable value for the sampling to be both computationally efficient and representative (so, not too large but not too small).
 
 Even if the function samples from a bivariate flat-top normal distribution, it is designed to focus only on a special case where the standard deviation (\code{sd}) and the radius of a circle in which the flat-top of the kernel is defined (\code{range}) is unique. In doing so, the function assumes weights are equal in both direction.
-
-If the \code{range} is set at 0
 }
 \examples{
 rFlatTopNorm(10)

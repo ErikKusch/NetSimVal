@@ -27,3 +27,6 @@ data("Network_igraph")
 Val.Realise(Network_igraph = Network_igraph, Trait_means = Niches_vec)
 
 }
+\author{
+Erik Kusch, Natural History Museum, University of Oslo, Norway.
+}

@@ -47,3 +47,6 @@ An updated data frame of individuals and their dynamic death rates.
 \description{
 This is a helper function for updating of dynamic death rates in the simulation run.
 }
+\author{
+Erik Kusch, Natural History Museum, University of Oslo, Norway.
+}

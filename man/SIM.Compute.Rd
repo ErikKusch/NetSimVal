@@ -7,16 +7,16 @@
 Sim.Compute(
   d0 = 0.4,
   b0 = 0.6,
-  env.xy,
-  t_max = 10,
-  t_inter = 0.1,
-  sd = 2.5,
-  migration = 0.2,
-  range = 0.05,
-  Effect_Dis = 0.5,
-  Network_igraph,
   k_vec,
   ID_df,
+  env.xy,
+  env.sd = 2.5,
+  mig.sd = 0.2,
+  mig.top = 0.05,
+  interac.maxdis = 0.5,
+  interac.igraph,
+  Sim.t.max = 10,
+  Sim.t.inter = 0.1,
   seed = 42,
   verbose = TRUE,
   RunName = ""
@@ -27,25 +27,25 @@ Sim.Compute(
 
 \item{b0}{Numeric. background birth rate (remains constant).}
 
-\item{env.xy}{Environmental matrix as produced by Sim.Space(). Cells contain environmental values whereas column and row names contain spatial coordinates.}
-
-\item{t_max}{Numeric. Maximum simulation time.}
-
-\item{t_inter}{Numeric. Interval length at which to record simulation outputs (measured in simulation time).}
-
-\item{sd}{Numeric. Habitat suitability in death rate function. Higher values allow individuals to persist in areas of greater environmental maladaptation.}
-
-\item{migration}{Numeric. Standard deviation of 0-centred normal distribution from which natal dispersal is drawn.}
-
-\item{range}{Numeric. Distance around a birth event within which the chance of a birth to occur are high (i.e. the flat-top portion of a bivariate flat-top normal distribution).}
-
-\item{Effect_Dis}{Numeric. Distance within which neighbouring individuals interact with a focal individual.}
-
-\item{Network_igraph}{An igraph object with association/interaction strength stored as "weight" attribute of edges. Output of Sim.Network().}
-
 \item{k_vec}{Named vector containing carrying capacity for each species. Output of Sim.CarryingK().}
 
 \item{ID_df}{Data frame of initialising individuals with columns ID, Trait, X, Y, and Species. Output of Sim.Initialise()$ID_df.}
+
+\item{env.xy}{Environmental matrix as produced by Sim.Space(). Cells contain environmental values whereas column and row names contain spatial coordinates.}
+
+\item{env.sd}{Numeric. Habitat suitability in death rate function. Higher values allow individuals to persist in areas of greater environmental maladaptation.}
+
+\item{mig.sd}{Numeric. Standard deviation of 0-centred normal distribution from which natal dispersal is drawn.}
+
+\item{mig.top}{Numeric. Distance around a birth event within which the chance of a birth to occur are high (i.e. the flat-top portion of a bivariate flat-top normal distribution).}
+
+\item{interac.maxdis}{Numeric. Distance within which neighbouring individuals interact with a focal individual.}
+
+\item{interac.igraph}{An igraph object with association/interaction strength stored as "weight" attribute of edges. Output of Sim.Network().}
+
+\item{Sim.t.max}{Numeric. Maximum simulation time.}
+
+\item{Sim.t.inter}{Numeric. Interval length at which to record simulation outputs (measured in simulation time).}
 
 \item{seed}{Numeric. Seed for random processes.}
 
@@ -54,7 +54,7 @@ Sim.Compute(
 \item{RunName}{Character. Name for temporary .RData object written to disk.}
 }
 \value{
-A list containing data frame object with the same columns as ID_df at each sampling interval defined via n_inter until t_max is reached.
+A list containing data frame object with the same columns as ID_df at each sampling interval defined via n_inter until Sim.t.max is reached.
 }
 \description{
 This function carries out spatially explicit, individual-based demographic simulation for the generation of data products ready for network inference.
@@ -74,17 +74,17 @@ SimResult <- Sim.Compute(
 
     # Spatial parameters
     env.xy = Env_mat,
-    sd = 2.5,
-    migration = 0.2,
-    range = 0.05,
+    env.sd = 2.5,
+    mig.sd = 0.2,
+    mig.top = 0.05,
 
     # Interaction parameters
-    Effect_Dis = 0.5,
-    Network_igraph = Network_igraph,
+    interac.maxdis = 0.5,
+    interac.igraph = Network_igraph,
 
     # Simulation parameters
-    t_max = 5,
-    t_inter = 0.1,
+    Sim.t.max = 5,
+    Sim.t.inter = 0.1,
     seed = 42,
     verbose = TRUE, # whether to print progress in time as current time
     RunName = "Trial"

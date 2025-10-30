@@ -4,21 +4,21 @@
 #'
 #' @param d0 Numeric. background death rate (gets altered by the environment and interactions).
 #' @param b0 Numeric. background birth rate (remains constant).
-#' @param env.xy Environmental matrix as produced by Sim.Space(). Cells contain environmental values whereas column and row names contain spatial coordinates.
-#' @param t_max Numeric. Maximum simulation time.
-#' @param t_inter Numeric. Interval length at which to record simulation outputs (measured in simulation time).
-#' @param sd Numeric. Habitat suitability in death rate function. Higher values allow individuals to persist in areas of greater environmental maladaptation.
-#' @param migration Numeric. Standard deviation of 0-centred normal distribution from which natal dispersal is drawn.
-#' @param range Numeric. Distance around a birth event within which the chance of a birth to occur are high (i.e. the flat-top portion of a bivariate flat-top normal distribution).
-#' @param Effect_Dis Numeric. Distance within which neighbouring individuals interact with a focal individual.
-#' @param Network_igraph An igraph object with association/interaction strength stored as "weight" attribute of edges. Output of Sim.Network().
 #' @param k_vec Named vector containing carrying capacity for each species. Output of Sim.CarryingK().
 #' @param ID_df Data frame of initialising individuals with columns ID, Trait, X, Y, and Species. Output of Sim.Initialise()$ID_df.
+#' @param env.xy Environmental matrix as produced by Sim.Space(). Cells contain environmental values whereas column and row names contain spatial coordinates.
+#' @param env.sd Numeric. Habitat suitability in death rate function. Higher values allow individuals to persist in areas of greater environmental maladaptation.
+#' @param mig.sd Numeric. Standard deviation of 0-centred normal distribution from which natal dispersal is drawn.
+#' @param mig.top Numeric. Distance around a birth event within which the chance of a birth to occur are high (i.e. the flat-top portion of a bivariate flat-top normal distribution).
+#' @param interac.maxdis Numeric. Distance within which neighbouring individuals interact with a focal individual.
+#' @param interac.igraph An igraph object with association/interaction strength stored as "weight" attribute of edges. Output of Sim.Network().
+#' @param Sim.t.max Numeric. Maximum simulation time.
+#' @param Sim.t.inter Numeric. Interval length at which to record simulation outputs (measured in simulation time).
 #' @param seed Numeric. Seed for random processes.
 #' @param verbose Logical. Whether to print simulation time and sampling interval.
 #' @param RunName Character. Name for temporary .RData object written to disk.
 #'
-#' @return A list containing data frame object with the same columns as ID_df at each sampling interval defined via n_inter until t_max is reached.
+#' @return A list containing data frame object with the same columns as ID_df at each sampling interval defined via n_inter until Sim.t.max is reached.
 #'
 #' @importFrom lubridate seconds_to_period
 #' @importFrom igraph as_adjacency_matrix
@@ -40,17 +40,17 @@
 #' 
 #'     # Spatial parameters
 #'     env.xy = Env_mat,
-#'     sd = 2.5,
-#'     migration = 0.2,
-#'     range = 0.05,
+#'     env.sd = 2.5,
+#'     mig.sd = 0.2,
+#'     mig.top = 0.05,
 #' 
 #'     # Interaction parameters
-#'     Effect_Dis = 0.5,
-#'     Network_igraph = Network_igraph,
+#'     interac.maxdis = 0.5,
+#'     interac.igraph = Network_igraph,
 #' 
 #'     # Simulation parameters
-#'     t_max = 5,
-#'     t_inter = 0.1,
+#'     Sim.t.max = 5,
+#'     Sim.t.inter = 0.1,
 #'     seed = 42,
 #'     verbose = TRUE, # whether to print progress in time as current time
 #'     RunName = "Trial"
@@ -60,16 +60,16 @@
 Sim.Compute <- function(
     d0 = 0.4,
     b0 = 0.6,
-    env.xy, # space matrix
-    t_max = 10,
-    t_inter = 0.1,
-    sd = 2.5,
-    migration = 0.2,
-    range = 0.05,
-    Effect_Dis = 0.5,
-    Network_igraph,
     k_vec,
     ID_df,
+    env.xy, # space matrix
+    env.sd = 2.5,
+    mig.sd = 0.2,
+    mig.top = 0.05,
+    interac.maxdis = 0.5,
+    interac.igraph,
+    Sim.t.max = 10,
+    Sim.t.inter = 0.1,
     seed = 42,
     verbose = TRUE, # whether to print progress in time as current time
     RunName = "") {
@@ -77,7 +77,7 @@ Sim.Compute <- function(
   set.seed(seed)
 
   ## Network as adjacency matrix
-  Effect_Mat <- as_adjacency_matrix(Network_igraph, attr = "weight") # columns affect rows
+  Effect_Mat <- as_adjacency_matrix(interac.igraph, attr = "weight") # columns affect rows
   rownames(Effect_Mat) <- colnames(Effect_Mat) <- names(k_vec)
 
   ## environmental range
@@ -87,9 +87,9 @@ Sim.Compute <- function(
   ## dynamic death rate initialisation
   ID_df <- Sim.d0Update(
     ID_df = ID_df, which = "Initial",
-    env.xy = env.xy, d0 = d0, b0 = b0, sd = sd,
+    env.xy = env.xy, d0 = d0, b0 = b0, sd = env.sd,
     Effect_Mat = Effect_Mat, k_vec = k_vec,
-    Effect_Dis = Effect_Dis, seed = seed
+    Effect_Dis = interac.maxdis, seed = seed
   )
 
   ## list object to store individuals at each time step
@@ -100,11 +100,11 @@ Sim.Compute <- function(
   names(ID_ls)[length(ID_ls)] <- t
   ## progress bar
   if (!verbose) {
-    pb <- txtProgressBar(min = 0, max = t_max, style = 3)
+    pb <- txtProgressBar(min = 0, max = Sim.t.max, style = 3)
   }
   TimeStart <- Sys.time()
   ## simulation loop over time steps
-  while (t < t_max) {
+  while (t < Sim.t.max) {
     # if(verbose){print(t)}
     ## vectors for storing birth and death probabilities for each individual
     birth_prob <- rep(b0, nrow(ID_df))
@@ -132,9 +132,9 @@ Sim.Compute <- function(
       append_df$ID <- max(ID_df$ID) + 1
       newloc.xy <- rFlatTopNorm(1, 
                                 mean = c(append_df$X, append_df$Y),
-                                sd = migration,
-                                range = range,
-                                truncDist = Effect_Dis)
+                                sd = mig.sd,
+                                range = mig.top,
+                                truncDist = interac.maxdis)
       newloc.x <- newloc.xy[1]
       newloc.y <- newloc.xy[2]
 
@@ -155,20 +155,20 @@ Sim.Compute <- function(
     ## dynamic death rate recalculation
     ID_df <- Sim.d0Update(
       ID_df = ID_df, which = affected_row, event = event_EV,
-      env.xy = env.xy, d0 = d0, b0 = b0, sd = sd,
+      env.xy = env.xy, d0 = d0, b0 = b0, sd = env.sd,
       Effect_Mat = Effect_Mat, k_vec = k_vec,
-      Effect_Dis = Effect_Dis, seed = round(t, 3) * 1e4 + seed
+      Effect_Dis = interac.maxdis, seed = round(t, 3) * 1e4 + seed
     )
     ## Gillespie time
     ### identify by how much time advances
     tadvance <- rexp(1, rate = sum(c(birth_prob, death_prob)))
     t <- t + tadvance
     ### record data only if interval is met
-    if (t - as.numeric(names(ID_ls)[length(ID_ls)]) >= t_inter) {
+    if (t - as.numeric(names(ID_ls)[length(ID_ls)]) >= Sim.t.inter) {
       # if(verbose){message(t)}
       ID_ls <- c(ID_ls, list(ID_df))
       names(ID_ls)[length(ID_ls)] <- t
-      saveobj <- list(Call = call_info, Network = Network_igraph, K = k_vec, Simulation = ID_ls)
+      saveobj <- list(Call = call_info, Network = interac.igraph, K = k_vec, Simulation = ID_ls)
       save(saveobj,
         file = paste0("TEMP_SIM_", RunName, "-", seed, ".RData")
       )
@@ -180,7 +180,7 @@ Sim.Compute <- function(
     # estimator of finish
     if (verbose) {
       TimeEnd <- Sys.time()
-      PercRem <- ((t_max - t) / t_max) * 100
+      PercRem <- ((Sim.t.max - t) / Sim.t.max) * 100
       PercDone <- 100 - PercRem
       if (PercDone > 100) {
         PercDone <- 100

@@ -33,14 +33,9 @@ Sim.d0Update <- function(
     N * (b0 - d0) / k
   }
 
-  d0E <- function(Tr, Env, sd, range) {
+  d0E <- function(Tr, Env, sd) {
     x <- abs(Tr - Env)
-    if(x < range){
-      res <- exp(((range/2) / sd)^2)
-    }else{
-      res <- exp(((x - range/2) / sd)^2)
-    }
-    res
+    exp((x/ sd)^2)
   }
   
   d0Omega <- function(Effect_Mat, Effect_Dis, ID_df, i) {

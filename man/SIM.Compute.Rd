@@ -27,7 +27,7 @@ Sim.Compute(
 
 \item{b0}{Numeric. background birth rate (remains constant).}
 
-\item{env.xy}{Environmental matrix as produced by Sim.Space().}
+\item{env.xy}{Environmental matrix as produced by Sim.Space(). Cells contain environmental values whereas column and row names contain spatial coordinates.}
 
 \item{t_max}{Numeric. Maximum simulation time.}
 
@@ -66,18 +66,25 @@ data("Network_igraph")
 data("Env_mat")
 
 SimResult <- Sim.Compute(
+    # Demographic parameters
     d0 = 0.4,
     b0 = 0.6,
+    k_vec = CarryingK_vec,
+    ID_df = Initialise_df,
+
+    # Spatial parameters
     env.xy = Env_mat,
-    t_max = 5,
-    t_inter = 0.1,
     sd = 2.5,
     migration = 0.2,
     range = 0.05,
+
+    # Interaction parameters
     Effect_Dis = 0.5,
     Network_igraph = Network_igraph,
-    k_vec = CarryingK_vec,
-    ID_df = Initialise_df,
+
+    # Simulation parameters
+    t_max = 5,
+    t_inter = 0.1,
     seed = 42,
     verbose = TRUE, # whether to print progress in time as current time
     RunName = "Trial"

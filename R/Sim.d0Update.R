@@ -69,10 +69,10 @@ Sim.d0Update <- function(
     } else {
       FinalEffect_i <- 0
     }
-    if(FinalEffect_i > max.interac){
+    if(FinalEffect_i >= max.interac){
       FinalEffect_i <- Inf
     }
-    if(FinalEffect_i < max.interac){
+    if(FinalEffect_i <= max.interac){
       FinalEffect_i <- -Inf
     }
     return(FinalEffect_i)

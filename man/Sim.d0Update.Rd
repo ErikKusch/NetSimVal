@@ -12,6 +12,7 @@ Sim.d0Update(
   d0 = 0.4,
   b0 = 0.6,
   sd = 2.5,
+  beta = 1,
   Effect_Mat,
   k_vec,
   Effect_Dis = 0.5,
@@ -32,6 +33,8 @@ Sim.d0Update(
 \item{b0}{Numeric. background birth rate (remains constant).}
 
 \item{sd}{Numeric. Habitat suitability in death rate function. Higher values allow individuals to persist in areas of greater environmental maladaptation.}
+
+\item{beta}{Numeric. Scaling factor for strength of interaction effects on death rate.}
 
 \item{Effect_Mat}{Weighted adjacency matrix of association/interaction network.}
 

@@ -8,6 +8,7 @@
 #' @param d0 Numeric. background death rate (gets altered by the environment and interactions).
 #' @param b0 Numeric. background birth rate (remains constant).
 #' @param env.xy Environmental matrix as produced by Sim.Space().
+#' @param beta Numeric. Scaling factor for strength of interaction effects on death rate.
 #' @param sd Numeric. Habitat suitability in death rate function. Higher values allow individuals to persist in areas of greater environmental maladaptation.
 #' @param Effect_Mat Weighted adjacency matrix of association/interaction network.
 #' @param Effect_Dis Distance to which association/interaction effects are computed around individuals.
@@ -21,7 +22,7 @@
 Sim.d0Update <- function(
     ID_df, which = "Initial", event = NULL,
     env.xy,
-    d0 = 0.4, b0 = 0.6, sd = 2.5,
+    d0 = 0.4, b0 = 0.6, sd = 2.5, beta = 1,
     Effect_Mat,
     k_vec,
     Effect_Dis = 0.5,
@@ -59,8 +60,8 @@ Sim.d0Update <- function(
     }
     return(FinalEffect_i)
   }
-  dt <- function(d0, d0P, d0E, d0Omega) {
-    d0 + d0P * d0E - d0Omega
+  dt <- function(d0, d0P, d0E, d0Omega, beta) {
+    (d0 * d0P * d0E) * exp(-beta*d0Omega)
   }
   Get.Environment <- function(x, y, env_mat) {
     col <- which.min(abs(x - as.numeric(colnames(env_mat))))[1]
@@ -141,3 +142,4 @@ Sim.d0Update <- function(
   ID_df$dt[ID_df$dt < 0] <- 0 # make sure probabilities are never < 0
   return(ID_df)
 }
+

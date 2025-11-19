@@ -13,9 +13,9 @@
 #' @importFrom randcorr randcorr
 #' @importFrom igraph graph_from_adjacency_matrix
 #' @importFrom igraph E
-#' 
+#'
 #' @author Erik Kusch, Natural History Museum, University of Oslo, Norway.
-#' 
+#'
 #' @examples
 #' Sim.Network(
 #'   n_spec = 20,
@@ -56,8 +56,8 @@ Sim.Network <- function(n_spec = 20,
     )
   }
   if (NetworkType == "Association") {
-    Rand_corr[lower.tri(Rand_corr)] <- NA # make into undirected adjacency matrix representation
-    diag(Rand_corr) <- NA
+    # Rand_corr[lower.tri(Rand_corr)] <- 0 # make into undirected adjacency matrix representation
+    diag(Rand_corr) <- 0
     Rand_corr[sample(which(!is.na(Rand_corr)), as.integer(sum(!is.na(Rand_corr)) * Sparcity))] <- 0
     Rand_corr <- graph_from_adjacency_matrix(
       adjmatrix = Rand_corr,

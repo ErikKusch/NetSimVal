@@ -14,9 +14,9 @@
 #' @param Effect_Dis Distance to which association/interaction effects are computed around individuals.
 #' @param k_vec Named vector containing carrying capacity for each species. Output of Sim.CarryingK().
 #' @param seed Numeric. Seed for random processes.
-#' 
+#'
 #' @author Erik Kusch, Natural History Museum, University of Oslo, Norway.
-#' 
+#'
 #' @return An updated data frame of individuals and their dynamic death rates.
 #'
 Sim.d0Update <- function(
@@ -36,9 +36,9 @@ Sim.d0Update <- function(
 
   d0E <- function(Tr, Env, sd) {
     x <- abs(Tr - Env)
-    exp((x/ sd)^2)
+    exp((x / sd)^2)
   }
-  
+
   d0Omega <- function(Effect_Mat, Effect_Dis, ID_df, i) {
     Abundances_i <- rep(0, ncol(Effect_Mat))
     names(Abundances_i) <- colnames(Effect_Mat)
@@ -61,7 +61,7 @@ Sim.d0Update <- function(
     return(FinalEffect_i)
   }
   dt <- function(d0, d0P, d0E, d0Omega, beta) {
-    (d0 * d0P * d0E) * exp(-beta*d0Omega)
+    (d0 * d0P * d0E) * exp(-beta * d0Omega)
   }
   Get.Environment <- function(x, y, env_mat) {
     col <- which.min(abs(x - as.numeric(colnames(env_mat))))[1]
@@ -79,7 +79,7 @@ Sim.d0Update <- function(
     )
     ID_df$d0P <- as.numeric(d0P_vec[match(ID_df$Species, names(d0P_vec))])
     ### environment
-    ID_df$Env <- apply(ID_df, 1, FUN = function(row){
+    ID_df$Env <- apply(ID_df, 1, FUN = function(row) {
       # print(row)
       Get.Environment(
         x = as.numeric(row["X"]),
@@ -111,9 +111,10 @@ Sim.d0Update <- function(
     ## environment
     if (event == "Birth") {
       which$Env <- Get.Environment(
-          x = which$X,
-          y = which$Y,
-          env_mat = env.xy)
+        x = which$X,
+        y = which$Y,
+        env_mat = env.xy
+      )
       ID_df$d0E[ID_df$ID == which$ID] <- d0E(
         Tr = which$Trait,
         Env = which$Env,
@@ -137,9 +138,9 @@ Sim.d0Update <- function(
     d0 = d0,
     d0P = ID_df$d0P,
     d0E = ID_df$d0E,
-    d0Omega = ID_df$d0Omega
+    d0Omega = ID_df$d0Omega,
+    beta = beta
   )
   ID_df$dt[ID_df$dt < 0] <- 0 # make sure probabilities are never < 0
   return(ID_df)
 }
-

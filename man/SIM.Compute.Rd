@@ -15,6 +15,7 @@ Sim.Compute(
   mig.top = 0.05,
   interac.maxdis = 0.5,
   interac.igraph,
+  interac.scale = 1,
   Sim.t.max = 10,
   Sim.t.inter = 0.1,
   seed = 42,
@@ -42,6 +43,8 @@ Sim.Compute(
 \item{interac.maxdis}{Numeric. Distance within which neighbouring individuals interact with a focal individual.}
 
 \item{interac.igraph}{An igraph object with association/interaction strength stored as "weight" attribute of edges. Output of Sim.Network().}
+
+\item{interac.scale}{Numeric. Scaling factor for strength of interaction effects on death rate.}
 
 \item{Sim.t.max}{Numeric. Maximum simulation time.}
 
@@ -81,6 +84,7 @@ SimResult <- Sim.Compute(
     # Interaction parameters
     interac.maxdis = 0.5,
     interac.igraph = Network_igraph,
+    interac.scale = 1,
 
     # Simulation parameters
     Sim.t.max = 5,

@@ -12,6 +12,7 @@
 #' @param mig.top Numeric. Distance around a birth event within which the chance of a birth to occur are high (i.e. the flat-top portion of a bivariate flat-top normal distribution).
 #' @param interac.maxdis Numeric. Distance within which neighbouring individuals interact with a focal individual.
 #' @param interac.igraph An igraph object with association/interaction strength stored as "weight" attribute of edges. Output of Sim.Network().
+#' @param interac.scale Numeric. Scaling factor for strength of interaction effects on death rate.
 #' @param Sim.t.max Numeric. Maximum simulation time.
 #' @param Sim.t.inter Numeric. Interval length at which to record simulation outputs (measured in simulation time).
 #' @param seed Numeric. Seed for random processes.
@@ -47,6 +48,7 @@
 #'     # Interaction parameters
 #'     interac.maxdis = 0.5,
 #'     interac.igraph = Network_igraph,
+#'     interac.scale = 1,
 #' 
 #'     # Simulation parameters
 #'     Sim.t.max = 5,
@@ -68,6 +70,7 @@ Sim.Compute <- function(
     mig.top = 0.05,
     interac.maxdis = 0.5,
     interac.igraph,
+    interac.scale = 1,
     Sim.t.max = 10,
     Sim.t.inter = 0.1,
     seed = 42,
@@ -89,7 +92,8 @@ Sim.Compute <- function(
     ID_df = ID_df, which = "Initial",
     env.xy = env.xy, d0 = d0, b0 = b0, sd = env.sd,
     Effect_Mat = Effect_Mat, k_vec = k_vec,
-    Effect_Dis = interac.maxdis, seed = seed
+    Effect_Dis = interac.maxdis, seed = seed,
+    beta = interac.scale
   )
 
   ## list object to store individuals at each time step
@@ -157,7 +161,8 @@ Sim.Compute <- function(
       ID_df = ID_df, which = affected_row, event = event_EV,
       env.xy = env.xy, d0 = d0, b0 = b0, sd = env.sd,
       Effect_Mat = Effect_Mat, k_vec = k_vec,
-      Effect_Dis = interac.maxdis, seed = round(t, 3) * 1e4 + seed
+      Effect_Dis = interac.maxdis, seed = round(t, 3) * 1e4 + seed,
+      beta = interac.scale
     )
     ## Gillespie time
     ### identify by how much time advances

@@ -61,7 +61,7 @@ Sim.d0Update <- function(
     return(FinalEffect_i)
   }
   dt <- function(d0, d0P, d0E, d0Omega, beta) {
-    d0 + (d0P * d0E) * exp(-beta * d0Omega)
+    (d0 + d0P * d0E) * exp(-beta * d0Omega)
   }
   Get.Environment <- function(x, y, env_mat) {
     col <- which.min(abs(x - as.numeric(colnames(env_mat))))[1]

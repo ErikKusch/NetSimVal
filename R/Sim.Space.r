@@ -10,9 +10,9 @@
 #' @param y_gradient Function that defines how values change along the y-axis. Default is the identity function resulting in a linear gradient.
 #'
 #' @return A matrix where cells report environmental values while column and row names report X and Y coordinates, respectively.
-#' 
+#'
 #' @author Erik Kusch, Natural History Museum, University of Oslo, Norway.
-#' 
+#'
 #' @examples
 #' # 1. Simple linear gradient matrix
 #' mat <- Sim.Space(
@@ -51,7 +51,7 @@ Sim.Space <- function(
     # Outer product to create 2D grid: each cell is x + y (or x * y, etc.)
     grid <- outer(y_vals, x_vals, "+") # or "*", depending on desired effect
     colnames(grid) <- x_seq
-    rownames(grid) <- rev(y_seq)
+    rownames(grid) <- y_seq
 
     return(grid)
 }

@@ -23,39 +23,39 @@
 #'
 #' @importFrom lubridate seconds_to_period
 #' @importFrom igraph as_adjacency_matrix
-#' 
+#'
 #' @author Erik Kusch, Natural History Museum, University of Oslo, Norway.
-#' 
+#'
 #' @examples
 #' data("Initialise_df")
 #' data("CarryingK_vec")
 #' data("Network_igraph")
 #' data("Env_mat")
-#' 
+#'
 #' SimResult <- Sim.Compute(
-#'     # Demographic parameters
-#'     d0 = 0.4,
-#'     b0 = 0.6,
-#'     k_vec = CarryingK_vec,
-#'     ID_df = Initialise_df,
-#' 
-#'     # Spatial parameters
-#'     env.xy = Env_mat,
-#'     env.sd = 2.5,
-#'     mig.sd = 0.2,
-#'     mig.top = 0.05,
-#' 
-#'     # Interaction parameters
-#'     interac.maxdis = 0.5,
-#'     interac.igraph = Network_igraph,
-#'     interac.scale = 1,
-#' 
-#'     # Simulation parameters
-#'     Sim.t.max = 5,
-#'     Sim.t.inter = 0.1,
-#'     seed = 42,
-#'     verbose = TRUE, # whether to print progress in time as current time
-#'     RunName = "Trial"
+#'   # Demographic parameters
+#'   d0 = 0.4,
+#'   b0 = 0.6,
+#'   k_vec = CarryingK_vec,
+#'   ID_df = Initialise_df,
+#'
+#'   # Spatial parameters
+#'   env.xy = Env_mat,
+#'   env.sd = 2.5,
+#'   mig.sd = 0.2,
+#'   mig.top = 0.05,
+#'
+#'   # Interaction parameters
+#'   interac.maxdis = 0.5,
+#'   interac.igraph = Network_igraph,
+#'   interac.scale = 1,
+#'
+#'   # Simulation parameters
+#'   Sim.t.max = 5,
+#'   Sim.t.inter = 0.1,
+#'   seed = 42,
+#'   verbose = TRUE, # whether to print progress in time as current time
+#'   RunName = "Trial"
 #' )
 #'
 #' @export
@@ -134,11 +134,12 @@ Sim.Compute <- function(
     if (event_EV == "Birth") {
       append_df <- ID_df[ID_df$ID == event_ID, ]
       append_df$ID <- max(ID_df$ID) + 1
-      newloc.xy <- rFlatTopNorm(1, 
-                                mean = c(append_df$X, append_df$Y),
-                                sd = mig.sd,
-                                range = mig.top,
-                                truncDist = interac.maxdis)
+      newloc.xy <- rFlatTopNorm(1,
+        mean = c(append_df$X, append_df$Y),
+        sd = mig.sd,
+        range = mig.top,
+        truncDist = interac.maxdis
+      )
       newloc.x <- newloc.xy[1]
       newloc.y <- newloc.xy[2]
 

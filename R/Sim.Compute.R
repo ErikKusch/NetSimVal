@@ -118,6 +118,7 @@ Sim.Compute <- function(
     ## event identification
     EventSample_vec <- paste(rep(c("Birth", "Death"), each = nrow(ID_df)), names(birth_prob), sep = "_")
     ProbSample_vec <- c(birth_prob, death_prob)
+    # print(ProbSample_vec)
     if (any(ProbSample_vec == Inf)) {
       event <- EventSample_vec[which(ProbSample_vec == Inf)[1]]
     } else {
@@ -154,6 +155,7 @@ Sim.Compute <- function(
       affected_row <- ID_df[nrow(ID_df), ]
     }
     if (event_EV == "Death") {
+      # print(ID_df[ID_df$ID == event_ID, ])
       affected_row <- ID_df[ID_df$ID == as.numeric(event_ID), ]
       ID_df <- ID_df[ID_df$ID != event_ID, ]
     }

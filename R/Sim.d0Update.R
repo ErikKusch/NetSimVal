@@ -40,6 +40,7 @@ Sim.d0Update <- function(
   }
 
   d0Omega <- function(Effect_Mat, Effect_Dis, ID_df, i) {
+    i <- which(ID_df$ID == i)
     Abundances_i <- rep(0, ncol(Effect_Mat))
     names(Abundances_i) <- colnames(Effect_Mat)
     Abundances_obs <- table(ID_df[-i, ][
@@ -50,10 +51,15 @@ Sim.d0Update <- function(
     Abundances_i[match(names(Abundances_obs), names(Abundances_i))] <- Abundances_obs
     ### Extract all effects that the focal species is subject to in the interaction matrix
     Effects_i <- Effect_Mat[which(rownames(Effect_Mat) == ID_df[i, "Species"]), ]
-    ### Weigh effects by abundances
-    WeightedEffects_i <- Abundances_i * Effects_i
+
+    ## remove all zero-effects or abundances. Keeping these artificially pulls the effect of non-zero interactions closer to zero
+    Abundances_i <- Abundances_i[-which(Abundances_i == 0 | Effects_i == 0)]
+    Effects_i <- Effects_i[-which(Abundances_i == 0 | Effects_i == 0)]
+
     ### Calculate final effect
-    if (sum(Abundances_i) != 0) {
+    if (length(Effects_i) > 0) {
+      ### Weigh effects by abundances
+      WeightedEffects_i <- Abundances_i * Effects_i
       FinalEffect_i <- sum(WeightedEffects_i) / sum(Abundances_i)
     } else {
       FinalEffect_i <- 0
@@ -92,7 +98,7 @@ Sim.d0Update <- function(
       sd = sd
     )
     ### Interactions
-    ID_df$d0Omega <- sapply(1:nrow(ID_df), FUN = function(i) {
+    ID_df$d0Omega <- sapply(ID_df$ID, FUN = function(i) {
       d0Omega(
         Effect_Mat = Effect_Mat, Effect_Dis = Effect_Dis,
         ID_df = ID_df, i = i

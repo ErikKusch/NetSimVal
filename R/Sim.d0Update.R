@@ -53,8 +53,9 @@ Sim.d0Update <- function(
     Effects_i <- Effect_Mat[which(rownames(Effect_Mat) == ID_df[i, "Species"]), ]
 
     ## remove all zero-effects or abundances. Keeping these artificially pulls the effect of non-zero interactions closer to zero
-    Abundances_i <- Abundances_i[-which(Abundances_i == 0 | Effects_i == 0)]
-    Effects_i <- Effects_i[-which(Abundances_i == 0 | Effects_i == 0)]
+    Keep <- which(Abundances_i != 0 & Effects_i != 0)
+    Abundances_i <- Abundances_i[Keep]
+    Effects_i <- Effects_i[Keep]
 
     ### Calculate final effect
     if (length(Effects_i) > 0) {

@@ -1,6 +1,6 @@
 Package: NetSimVal
 Title: Network Simulation Inference Validation
-Version: 0.1.4
+Version: 0.1.5
 Authors@R: c(
     person("Erik", "Kusch", email = "erik.kusch@nhm.uio.no", role = c("aut", "cre", ""),
            comment = c(ORCID = "0000-0002-4984-7646")),

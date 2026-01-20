@@ -10,6 +10,7 @@
 #' @param env.sd Numeric. Habitat suitability in death rate function. Higher values allow individuals to persist in areas of greater environmental maladaptation.
 #' @param mig.sd Numeric. Standard deviation of 0-centred normal distribution from which natal dispersal is drawn.
 #' @param mig.top Numeric. Distance around a birth event within which the chance of a birth to occur are high (i.e. the flat-top portion of a bivariate flat-top normal distribution).
+#' @param mig.trunc Numeric. Maximum distance of migration.
 #' @param interac.maxdis Numeric. Distance within which neighbouring individuals interact with a focal individual.
 #' @param interac.igraph An igraph object with association/interaction strength stored as "weight" attribute of edges. Output of Sim.Network().
 #' @param interac.scale Numeric. Scaling factor for strength of interaction effects on death rate.
@@ -18,6 +19,7 @@
 #' @param seed Numeric. Seed for random processes.
 #' @param verbose Logical. Whether to print simulation time and sampling interval.
 #' @param RunName Character. Name for temporary .RData object written to disk.
+#' @param writeFile Logical. Whether temporary .RData should be written to disk.
 #'
 #' @return A list containing data frame object with the same columns as ID_df at each sampling interval defined via n_inter until Sim.t.max is reached.
 #'
@@ -68,6 +70,7 @@ Sim.Compute <- function(
     env.sd = 2.5,
     mig.sd = 0.2,
     mig.top = 0.05,
+    mig.trunc = 1,
     interac.maxdis = 0.5,
     interac.igraph,
     interac.scale = 1,
@@ -75,7 +78,8 @@ Sim.Compute <- function(
     Sim.t.inter = 0.1,
     seed = 42,
     verbose = TRUE, # whether to print progress in time as current time
-    RunName = "") {
+    RunName = "",
+    writeFile = TRUE) {
   call_info <- match.call()
   set.seed(seed)
 
@@ -139,7 +143,7 @@ Sim.Compute <- function(
         mean = c(append_df$X, append_df$Y),
         sd = mig.sd,
         range = mig.top,
-        truncDist = interac.maxdis
+        truncDist = mig.trunc
       )
       newloc.x <- newloc.xy[1]
       newloc.y <- newloc.xy[2]
@@ -177,9 +181,11 @@ Sim.Compute <- function(
       ID_ls <- c(ID_ls, list(ID_df))
       names(ID_ls)[length(ID_ls)] <- t
       saveobj <- list(Call = call_info, Network = interac.igraph, K = k_vec, Simulation = ID_ls)
-      save(saveobj,
-        file = paste0("TEMP_SIM_", RunName, "-", seed, ".RData")
-      )
+      if (writeFile) {
+        save(saveobj,
+          file = paste0("TEMP_SIM_", RunName, "-", seed, ".RData")
+        )
+      }
     }
     ## update progress
     if (!verbose) {

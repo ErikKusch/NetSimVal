@@ -88,8 +88,8 @@ Sim.Compute <- function(
   rownames(Effect_Mat) <- colnames(Effect_Mat) <- names(k_vec)
 
   ## environmental range
-  Env_range_x <- range(as.numeric(colnames(Env_mat)))
-  Env_range_y <- range(as.numeric(rownames(Env_mat)))
+  Env_range_x <- range(as.numeric(colnames(env.xy)))
+  Env_range_y <- range(as.numeric(rownames(env.xy)))
 
   ## dynamic death rate initialisation
   ID_df <- Sim.d0Update(

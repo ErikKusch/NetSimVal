@@ -8,9 +8,9 @@
 #' @param Env_sd Numeric. Habitat suitability in death rate function. Higher values allow individuals to persist in areas of greater environmental maladaptation.
 #'
 #' @return An igraph object with association/interaction strength stored as "weight" attribute of edges.
-#' 
+#'
 #' @author Erik Kusch, Natural History Museum, University of Oslo, Norway.
-#' 
+#'
 #' @importFrom igraph as_adjacency_matrix
 #' @importFrom igraph is_directed
 #' @importFrom igraph V
@@ -40,7 +40,7 @@ Val.Realise <- function(Network_igraph,
 
   ## Trait Adjacency Matrix
   # Figuring out trait differences between potentially interacting species
-  SPTrait_df <- data.frame(Niches_vec)
+  SPTrait_df <- data.frame(Trait_means)
   SPTrait_df$Species <- rownames(SPTrait_df)
   colnames(SPTrait_df) <- c("Trait", "Species")
 

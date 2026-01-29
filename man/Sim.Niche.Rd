@@ -20,8 +20,8 @@ A named vector of random carrying capacity values for each species.
 This function generates a vector of random numbers representing carrying capacities for the demographic simulation.
 }
 \examples{
-Sim.Niche(n_spec = 20, Env_range = c(0,10), seed = 42)
-Sim.Niche(n_spec = 15, Env_range = c(11,33), seed = 42)
+Sim.Niche(n_spec = 20, Env_range = c(0, 10), seed = 42)
+Sim.Niche(n_spec = 15, Env_range = c(11, 33), seed = 42)
 
 }
 \author{

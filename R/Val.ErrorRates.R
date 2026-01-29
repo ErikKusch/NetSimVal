@@ -2,8 +2,9 @@
 #'
 #' Calculate accuracy of network inference by sign of underlying true link.
 #'
-#' @param Network1 igraph object. True network in comparison.
-#' @param Network2 igraph object. Inferred network in comparison.
+#' @param Network1 matrix object. First network in comparison.
+#' @param Network2 matrix object. Second network in comparison.
+#' @param NetworkType Character. Whether to create an interaction or association matrix. In an interaction matrix, columns act on rows. In an association matrix, entries are mirrored around the diagonal. Possible values: "Association" or "Interaction".
 #'
 #' @return A dataframe containing percentages and error rate types:
 #'    - TP ... true positive associations; how many of the inferred positive associations are correctly identified as such? - NaN means no positives in the inferred matrix
@@ -16,28 +17,25 @@
 #'    - MN ... true negative links which were not inferred; how many of the true negative associations were not inferred?
 #'    - MA ... true absent links which were not inferred; how many of the true absent associations were not inferred?
 #'
-#' @importFrom igraph V
-#' @importFrom igraph as_adjacency_matrix
-#' @importFrom igraph is_directed
-#' 
+#'
 #' @author Erik Kusch, Natural History Museum, University of Oslo, Norway.
-#' 
+#'
 #' @examples
 #' data("Network_igraph")
 #' data("Inferred_igraph")
 #' Val.ErrorRates(Network1 = Network_igraph, Network2 = Inferred_igraph)
 #'
 #' @export
-Val.ErrorRates <- function(Network1, Network2) {
+Val.ErrorRates <- function(Network1, Network2, NetworkType = "Association") {
   ## matrices
-  matrices_ls <- lapply(list(Network1, Network2), FUN = function(NetworkI) {
-    if (is.null(igraph::V(NetworkI)$names)) {
-      igraph::V(NetworkI)$names <- paste0("Sp_", igraph::V(NetworkI))
-    }
-    mat <- as.matrix(as_adjacency_matrix(NetworkI, attr = "weight"))
-    colnames(mat) <- rownames(mat) <- igraph::V(NetworkI)$names
-    diag(mat) <- NA
-    if (!is_directed(NetworkI)) {
+  matrices_ls <- lapply(list(Network1, Network2), FUN = function(mat) {
+    # if(is.null(igraph::V(NetworkI)$names)){
+    #   igraph::V(NetworkI)$names <- paste0("Sp_", igraph::V(NetworkI))
+    # }
+    # mat <- as.matrix(as_adjacency_matrix(NetworkI, attr = "weight"))
+    # colnames(mat) <- rownames(mat) <- igraph::V(NetworkI)$names
+    # diag(mat) <- NA
+    if (NetworkType == "Association") {
       mat[lower.tri(mat)] <- NA
     }
     sign(mat)

@@ -1,6 +1,6 @@
 Package: NetSimVal
 Title: Network Simulation Inference Validation
-Version: 0.1.7
+Version: 0.2.0
 Authors@R: c(
     person("Erik", "Kusch", email = "erik.kusch@nhm.uio.no", role = c("aut", "cre", ""),
            comment = c(ORCID = "0000-0002-4984-7646")),
@@ -16,7 +16,8 @@ Imports:
     brms (>= 2.21.0),
     igraph (>= 2.0.3),
     lubridate (>= 1.9.3),
-    randcorr (>= 1.0)
+    randcorr (>= 1.0),
+    stringr
 Depends: 
     R (>= 3.5)
 LazyData: true

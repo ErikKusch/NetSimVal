@@ -4,12 +4,14 @@
 \alias{Val.ErrorRates}
 \title{Network Inference Error Rates Validation}
 \usage{
-Val.ErrorRates(Network1, Network2)
+Val.ErrorRates(Network1, Network2, NetworkType = "Association")
 }
 \arguments{
-\item{Network1}{igraph object. True network in comparison.}
+\item{Network1}{matrix object. First network in comparison.}
 
-\item{Network2}{igraph object. Inferred network in comparison.}
+\item{Network2}{matrix object. Second network in comparison.}
+
+\item{NetworkType}{Character. Whether to create an interaction or association matrix. In an interaction matrix, columns act on rows. In an association matrix, entries are mirrored around the diagonal. Possible values: "Association" or "Interaction".}
 }
 \value{
 A dataframe containing percentages and error rate types:

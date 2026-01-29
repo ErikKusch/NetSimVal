@@ -5,7 +5,7 @@
 \title{Generate Random Association/Interaction Network Matrices}
 \usage{
 Sim.Network(
-  n_spec = 20,
+  n_spec = 5,
   NetworkType = "Association",
   Sparcity = 0.5,
   MaxStrength = 1,
@@ -24,7 +24,7 @@ Sim.Network(
 \item{seed}{Numeric. Seed for random processes.}
 }
 \value{
-An igraph object with association/interaction strength stored as "weight" attribute of edges.
+An matrix object with association/interaction strength stored as in cells.
 }
 \description{
 This function generates a random network matrix representing either an undirected (association) or directed (interaction) network matrix according to user specifications.

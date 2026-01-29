@@ -20,8 +20,8 @@ A named vector of random carrying capacity values for each species.
 This function generates a vector of random numbers representing carrying capacities for the demographic simulation.
 }
 \examples{
-Sim.CarryingK(n_spec = 20, k_range = c(200,200), seed = 42)
-Sim.CarryingK(n_spec = 20, k_range = c(100,300), seed = 42)
+Sim.CarryingK(n_spec = 20, k_range = c(200, 200), seed = 42)
+Sim.CarryingK(n_spec = 20, k_range = c(100, 300), seed = 42)
 
 }
 \author{

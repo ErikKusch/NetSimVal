@@ -11,9 +11,11 @@
 #' @param seed Numeric. Seed for random processes.
 #'
 #' @return A data frame - the data frame of initialising individuals with columns ID, Trait, X, Y, and Species.
-#' 
+#'
+#' @importFrom stringr str_pad
+#'
 #' @author Erik Kusch, Natural History Museum, University of Oslo, Norway.
-#' 
+#'
 #' @examples
 #' Niches_vec <- Sim.Niche(n_spec = 10, Env_range = c(0, 10), seed = 42)
 #' Sim.Initialise(
@@ -43,10 +45,16 @@ Sim.Initialise <- function(
   ## generating IDs and species memeberships
   if (n_mode == "each") {
     ID <- 1:(n_individuals * n_spec)
-    Species <- rep(paste("Sp", 1:n_spec, sep = "_"), each = n_individuals)
+    Species <- rep(
+      paste0("Sp_", stringr::str_pad(1:n_spec, width = 2, pad = "0")),
+      each = n_individuals
+    )
   } else {
     ID <- 1:n_individuals
-    Species <- sample(paste("Sp", 1:n_spec, sep = "_"), size = n_individuals, replace = TRUE)
+    Species <- sample(
+      paste0("Sp_", stringr::str_pad(1:n_spec, width = 2, pad = "0")),
+      size = n_individuals, replace = TRUE
+    )
   }
 
   ## creating data frame to hold individuals

@@ -51,6 +51,7 @@ Sim.d0Update <- function(
     Abundances_i[match(names(Abundances_obs), names(Abundances_i))] <- Abundances_obs
     ### Extract all effects that the focal species is subject to in the interaction matrix
     Effects_i <- Effect_Mat[which(rownames(Effect_Mat) == ID_df[i, "Species"]), ]
+    # print(Effects_i)
 
     ## remove all zero-effects or abundances. Keeping these artificially pulls the effect of non-zero interactions closer to zero
     Keep <- which(Abundances_i != 0 & Effects_i != 0)

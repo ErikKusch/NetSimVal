@@ -11,8 +11,8 @@
 #' @param mig.sd Numeric. Standard deviation of 0-centred normal distribution from which natal dispersal is drawn.
 #' @param mig.top Numeric. Distance around a birth event within which the chance of a birth to occur are high (i.e. the flat-top portion of a bivariate flat-top normal distribution).
 #' @param mig.trunc Numeric. Maximum distance of migration.
+#' @param interac.mat An matrix object with association/interaction strength stored as cell values. Output of Sim.Network().
 #' @param interac.maxdis Numeric. Distance within which neighbouring individuals interact with a focal individual.
-#' @param interac.igraph An igraph object with association/interaction strength stored as "weight" attribute of edges. Output of Sim.Network().
 #' @param interac.scale Numeric. Scaling factor for strength of interaction effects on death rate.
 #' @param Sim.t.max Numeric. Maximum simulation time.
 #' @param Sim.t.inter Numeric. Interval length at which to record simulation outputs (measured in simulation time).
@@ -24,7 +24,6 @@
 #' @return A list containing data frame object with the same columns as ID_df at each sampling interval defined via n_inter until Sim.t.max is reached.
 #'
 #' @importFrom lubridate seconds_to_period
-#' @importFrom igraph as_adjacency_matrix
 #'
 #' @author Erik Kusch, Natural History Museum, University of Oslo, Norway.
 #'
@@ -49,7 +48,7 @@
 #'
 #'   # Interaction parameters
 #'   interac.maxdis = 0.5,
-#'   interac.igraph = Network_igraph,
+#'   interac.mat = Network_igraph,
 #'   interac.scale = 1,
 #'
 #'   # Simulation parameters
@@ -72,7 +71,7 @@ Sim.Compute <- function(
     mig.top = 0.05,
     mig.trunc = 1,
     interac.maxdis = 0.5,
-    interac.igraph,
+    interac.mat,
     interac.scale = 1,
     Sim.t.max = 10,
     Sim.t.inter = 0.1,
@@ -83,10 +82,6 @@ Sim.Compute <- function(
   call_info <- match.call()
   set.seed(seed)
 
-  ## Network as adjacency matrix
-  Effect_Mat <- as_adjacency_matrix(interac.igraph, attr = "weight") # columns affect rows
-  rownames(Effect_Mat) <- colnames(Effect_Mat) <- names(k_vec)
-
   ## environmental range
   Env_range_x <- range(as.numeric(colnames(env.xy)))
   Env_range_y <- range(as.numeric(rownames(env.xy)))
@@ -95,10 +90,12 @@ Sim.Compute <- function(
   ID_df <- Sim.d0Update(
     ID_df = ID_df, which = "Initial",
     env.xy = env.xy, d0 = d0, b0 = b0, sd = env.sd,
-    Effect_Mat = Effect_Mat, k_vec = k_vec,
+    Effect_Mat = interac.mat, k_vec = k_vec,
     Effect_Dis = interac.maxdis, seed = seed,
     beta = interac.scale
   )
+  # print(head(ID_df))
+  # print(summary(ID_df$d0Omega))
 
   ## list object to store individuals at each time step
   ID_ls <- list(ID_df)
@@ -167,7 +164,7 @@ Sim.Compute <- function(
     ID_df <- Sim.d0Update(
       ID_df = ID_df, which = affected_row, event = event_EV,
       env.xy = env.xy, d0 = d0, b0 = b0, sd = env.sd,
-      Effect_Mat = Effect_Mat, k_vec = k_vec,
+      Effect_Mat = interac.mat, k_vec = k_vec,
       Effect_Dis = interac.maxdis, seed = round(t, 3) * 1e4 + seed,
       beta = interac.scale
     )
@@ -180,7 +177,7 @@ Sim.Compute <- function(
       # if(verbose){message(t)}
       ID_ls <- c(ID_ls, list(ID_df))
       names(ID_ls)[length(ID_ls)] <- t
-      saveobj <- list(Call = call_info, Network = interac.igraph, K = k_vec, Simulation = ID_ls)
+      saveobj <- list(Call = call_info, Network = interac.mat, K = k_vec, Simulation = ID_ls)
       if (writeFile) {
         save(saveobj,
           file = paste0("TEMP_SIM_", RunName, "-", seed, ".RData")

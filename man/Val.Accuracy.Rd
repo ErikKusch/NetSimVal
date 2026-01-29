@@ -4,12 +4,14 @@
 \alias{Val.Accuracy}
 \title{Network Inference Accuracy Validation}
 \usage{
-Val.Accuracy(Network1, Network2)
+Val.Accuracy(Network1, Network2, NetworkType = "Association")
 }
 \arguments{
-\item{Network1}{igraph object. First network in comparison.}
+\item{Network1}{matrix object. First network in comparison.}
 
-\item{Network2}{igraph object. Second network in comparison.}
+\item{Network2}{matrix object. Second network in comparison.}
+
+\item{NetworkType}{Character. Whether to create an interaction or association matrix. In an interaction matrix, columns act on rows. In an association matrix, entries are mirrored around the diagonal. Possible values: "Association" or "Interaction".}
 }
 \value{
 Percentage of shared links between the two networks out of all possible links.

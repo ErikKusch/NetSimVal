@@ -8,11 +8,10 @@
 #' @param MaxStrength Numeric. Maximum value of associations or interactions.
 #' @param seed Numeric. Seed for random processes.
 #'
-#' @return An igraph object with association/interaction strength stored as "weight" attribute of edges.
+#' @return An matrix object with association/interaction strength stored as in cells.
 #'
 #' @importFrom randcorr randcorr
-#' @importFrom igraph graph_from_adjacency_matrix
-#' @importFrom igraph E
+#' @importFrom stringr str_pad
 #'
 #' @author Erik Kusch, Natural History Museum, University of Oslo, Norway.
 #'
@@ -33,7 +32,7 @@
 #'   seed = 21
 #' )
 #' @export
-Sim.Network <- function(n_spec = 20,
+Sim.Network <- function(n_spec = 5,
                         NetworkType = "Association", # or "Association"
                         Sparcity = 0.5,
                         MaxStrength = 1,
@@ -44,28 +43,29 @@ Sim.Network <- function(n_spec = 20,
     stop('NetworkType needs to be either "Interaction" or "Association"')
   }
 
-  Rand_corr <- randcorr(n_spec) # establish random correlation matrix
+  Rand_corr <- randcorr(n_spec) * MaxStrength # establish random correlation matrix
   if (NetworkType == "Interaction") {
+    diag(Rand_corr) <- 0
     Rand_corr[lower.tri(Rand_corr)] <- randcorr(n_spec)[lower.tri(randcorr(n_spec))]
-    Rand_corr[sample(which(!is.na(Rand_corr)), as.integer(sum(!is.na(Rand_corr)) * Sparcity))] <- 0
-    Rand_corr <- graph_from_adjacency_matrix(
-      adjmatrix = Rand_corr,
-      mode = "directed",
-      weighted = TRUE,
-      diag = FALSE
-    )
+    Rand_corr[sample(which(Rand_corr != 0), as.integer(sum(!is.na(Rand_corr)) * Sparcity))] <- 0
   }
   if (NetworkType == "Association") {
     # Rand_corr[lower.tri(Rand_corr)] <- 0 # make into undirected adjacency matrix representation
     diag(Rand_corr) <- 0
-    Rand_corr[sample(which(!is.na(Rand_corr)), as.integer(sum(!is.na(Rand_corr)) * Sparcity))] <- 0
-    Rand_corr <- graph_from_adjacency_matrix(
-      adjmatrix = Rand_corr,
-      mode = "undirected",
-      weighted = TRUE,
-      diag = FALSE
-    )
+    idx <- which(upper.tri(Rand_corr, diag = FALSE), arr.ind = TRUE)
+    # how many to zero
+    k <- floor(nrow(idx) * Sparcity)
+    # randomly choose positions
+    zero_idx <- idx[sample(seq_len(nrow(idx)), k), , drop = FALSE]
+    # set both (i,j) and (j,i) to zero
+    for (r in seq_len(nrow(zero_idx))) {
+      i <- zero_idx[r, 1]
+      j <- zero_idx[r, 2]
+      Rand_corr[i, j] <- 0
+      Rand_corr[j, i] <- 0
+    }
   }
-  igraph::E(Rand_corr)$weight <- igraph::E(Rand_corr)$weight * MaxStrength
+  colnames(Rand_corr) <- rownames(Rand_corr) <- paste0("Sp_", stringr::str_pad(1:n_spec, width = 2, pad = "0"))
+  # igraph::E(Rand_corr)$weight <- igraph::E(Rand_corr)$weight * MaxStrength
   return(Rand_corr)
 }

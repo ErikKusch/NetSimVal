@@ -4,10 +4,18 @@
 \alias{Val.Realise}
 \title{Reduction of Network to Realisable Component}
 \usage{
-Val.Realise(Network_igraph, Trait_means, Effect_Dis = 0.5, Env_sd = 2.5)
+Val.Realise(
+  Network_mat,
+  NetworkType = "Association",
+  Trait_means,
+  Effect_Dis = 0.5,
+  Env_sd = 2.5
+)
 }
 \arguments{
-\item{Network_igraph}{An igraph object with association/interaction strength stored as "weight" attribute of edges. Output of Sim.Network().}
+\item{Network_mat}{An matrix object with association/interaction strength stored as cell values. Output of Sim.Network().}
+
+\item{NetworkType}{Character. Whether to create an interaction or association matrix. In an interaction matrix, columns act on rows. In an association matrix, entries are mirrored around the diagonal. Possible values: "Association" or "Interaction".}
 
 \item{Trait_means}{Numeric. Mean for bioclimatic niche preference of each species.}
 
@@ -16,7 +24,7 @@ Val.Realise(Network_igraph, Trait_means, Effect_Dis = 0.5, Env_sd = 2.5)
 \item{Env_sd}{Numeric. Habitat suitability in death rate function. Higher values allow individuals to persist in areas of greater environmental maladaptation.}
 }
 \value{
-An igraph object with association/interaction strength stored as "weight" attribute of edges.
+A matrix object with association/interaction strength stored as cell values.
 }
 \description{
 Takes an association or interaction network object as well as the bioclimatic niche preferences of each species to compute which links stored in the network can be realised. The cutoff is calculated as the difference between the niche preferences of species pairs vs. Effect_Dis + Env_sd.
